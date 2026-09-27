@@ -62,8 +62,7 @@ To use Authentication and Cloud Storage, you must set up a Firebase Project.
     *   Register a "Web App".
     *   Copy the `firebaseConfig` object.
 6.  **Update Code**:
-    *   Open `src/utils/firebase.ts`.
-    *   Replace the placeholder `firebaseConfig` object with your own keys.
+    *   Copy `.env.example` to `.env`, inserting the values from the Firebase config.
 
 > **Note**: If you see a "Domain Not Authorized" error during login, ensure your current browser URL (e.g., `127.0.0.1` or `localhost`) is added to the Authorized Domains list in the Firebase Console.
 
