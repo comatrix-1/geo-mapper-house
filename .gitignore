@@ -27,3 +27,12 @@ dist-ssr
 .env
 .env.local
 *.env
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
+
+CLAUDE.md
+.claude
+.qoder
+.kiro
+

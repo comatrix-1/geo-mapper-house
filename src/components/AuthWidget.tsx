@@ -8,6 +8,8 @@ import {
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth, googleProvider } from "../utils/firebase";
+import { formatFirebaseError } from "../utils/authErrors";
+import type { AuthErrorLike } from "../utils/authErrors";
 import {
   LogIn,
   LogOut,
@@ -49,60 +51,23 @@ const AuthWidget: React.FC<AuthWidgetProps> = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const formatFirebaseError = (error: any) => {
-    const hostname = window.location.hostname;
-    const errorCode = error.code;
-    const errorMessage = error.message || "";
-
-    if (
-      errorCode === "auth/unauthorized-domain" ||
-      errorMessage.includes("unauthorized-domain")
-    ) {
-      const displayDomain =
-        hostname || window.location.host || "your-current-domain";
-      return `Domain Not Authorized\n\nFirebase blocked the sign-in attempt from: "${displayDomain}"\nTo fix this:\n1. Go to Firebase Console > Authentication > Settings > Authorized Domains\n2. Click "Add Domain"\n3. Enter: ${displayDomain}`;
-    }
-    if (errorCode === "auth/api-key-not-valid") {
-      return "Invalid API Key. Please ensure you have replaced the placeholder config in utils/firebase.ts with your own project keys.";
-    }
-    if (
-      errorCode === "auth/invalid-credential" ||
-      errorCode === "auth/user-not-found" ||
-      errorCode === "auth/wrong-password"
-    ) {
-      return "Invalid email or password.";
-    }
-    if (errorCode === "auth/email-already-in-use") {
-      return "This email is already registered. Please sign in instead.";
-    }
-    if (errorCode === "auth/weak-password") {
-      return "Password should be at least 6 characters.";
-    }
-    if (errorCode === "auth/invalid-email") {
-      return "Invalid email format.";
-    }
-    if (errorCode === "auth/too-many-requests") {
-      return "Too many failed attempts. Please try again later.";
-    }
-    return errorMessage;
-  };
-
   const handleGoogleLogin = async () => {
     setError(null);
     setIsLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
       setIsOpen(false);
-    } catch (error: any) {
-      console.error("Google Login failed", error);
+    } catch (error) {
+      const authError = error as AuthErrorLike;
+      console.error("Google Login failed", authError);
       if (
-        error.code === "auth/popup-closed-by-user" ||
-        error.code === "auth/cancelled-popup-request"
+        authError.code === "auth/popup-closed-by-user" ||
+        authError.code === "auth/cancelled-popup-request"
       ) {
         setIsLoading(false);
         return;
       }
-      setError(formatFirebaseError(error));
+      setError(formatFirebaseError(authError));
     } finally {
       setIsLoading(false);
     }
@@ -136,13 +101,19 @@ const AuthWidget: React.FC<AuthWidgetProps> = ({ user }) => {
       setEmail("");
       setPassword("");
       setDisplayName("");
-    } catch (error: any) {
-      console.error("Email Auth failed", error);
-      setError(formatFirebaseError(error));
+    } catch (error) {
+      const authError = error as AuthErrorLike;
+      console.error("Email Auth failed", authError);
+      setError(formatFirebaseError(authError));
     } finally {
       setIsLoading(false);
     }
   };
+
+  let submitLabel = isRegistering ? "Create Account" : "Sign In";
+  if (isLoading) {
+    submitLabel = isRegistering ? "Creating Account..." : "Signing In...";
+  }
 
   const handleLogout = async () => {
     try {
@@ -294,18 +265,8 @@ const AuthWidget: React.FC<AuthWidgetProps> = ({ user }) => {
                 disabled={isLoading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    <span>
-                      {isRegistering ? "Creating Account..." : "Signing In..."}
-                    </span>
-                  </>
-                ) : isRegistering ? (
-                  "Create Account"
-                ) : (
-                  "Sign In"
-                )}
+                {isLoading && <Loader2 size={16} className="animate-spin" />}
+                <span>{submitLabel}</span>
               </button>
             </form>
 

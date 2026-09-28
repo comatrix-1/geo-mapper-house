@@ -21,6 +21,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './test/setupTests.ts',
     css: false,
+    // Skip editor worktree copies (e.g. .kilo/worktrees) that duplicate tests
+    exclude: ['**/node_modules/**', '**/dist/**', '.kilo/**', '**/.kilo/**'],
   },
   define: {
     'process.env': {}

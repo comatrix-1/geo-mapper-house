@@ -16,7 +16,6 @@ import {
     Settings,
     X,
     Palette,
-    Download,
     FolderOpen,
     Save,
     AlertTriangle,
@@ -224,8 +223,9 @@ const LayerSidebar: React.FC<LayerSidebarProps> = ({
       try {
           const result = await importFile(file);
           setImportPreview(result);
-      } catch (err: any) {
-          alert('Failed to import file:\n' + (err.message || 'Unknown error'));
+      } catch (err) {
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          alert('Failed to import file:\n' + message);
           console.error(err);
       } finally {
           if (fileInputRef.current) fileInputRef.current.value = '';

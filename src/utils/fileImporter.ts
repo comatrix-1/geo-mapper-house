@@ -15,6 +15,24 @@ interface ProjectData {
   objects: MapObject[];
 }
 
+// Minimal structural types for parsed GeoJSON / project files (external, untrusted data)
+interface GeoJSONGeometry {
+  type?: string;
+  coordinates?: unknown;
+  geometries?: GeoJSONGeometry[];
+}
+
+interface GeoJSONFeature {
+  geometry?: GeoJSONGeometry | null;
+  properties?: Record<string, unknown> | null;
+}
+
+interface ParsedFile extends GeoJSONGeometry {
+  features?: GeoJSONFeature[];
+  layers?: Layer[];
+  objects?: MapObject[];
+}
+
 // Convert GeoJSON coordinates [lng, lat] to Leaflet {lat, lng}
 const toLatLng = (coords: number[]): LatLngLiteral => {
   if (!coords || coords.length < 2) return { lat: 0, lng: 0 };
@@ -22,19 +40,20 @@ const toLatLng = (coords: number[]): LatLngLiteral => {
 };
 
 // Helper to safely extract string properties
-const safeString = (val: any, fallback: string = ''): string => {
+const safeString = (val: unknown, fallback: string = ''): string => {
   if (typeof val === 'string') return val;
   if (typeof val === 'number') return String(val);
   if (val === null || val === undefined) return fallback;
   if (typeof val === 'object') {
-     if (val.value) return String(val.value);
+     const { value } = val as { value?: unknown };
+     if (value) return String(value);
      return fallback;
   }
   return String(val);
 };
 
 // Smart title extraction from properties
-const getTitleFromProps = (props: any): string => {
+const getTitleFromProps = (props: Record<string, unknown> | null): string => {
     if (!props) return 'Untitled Object';
     const keys = Object.keys(props);
     
@@ -54,7 +73,7 @@ const getTitleFromProps = (props: any): string => {
 };
 
 // Smart description construction
-const buildDescription = (props: any): string => {
+const buildDescription = (props: Record<string, unknown> | null): string => {
     if (!props) return '';
     
     // Start with explicit description fields
@@ -93,7 +112,12 @@ const buildDescription = (props: any): string => {
 };
 
 // Recursive function to extract simple geometries from complex ones
-const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, objects: MapObject[]) => {
+const extractObjectsFromGeometry = (
+    geometry: GeoJSONGeometry | null,
+    props: Record<string, unknown> | null,
+    layerId: string,
+    objects: MapObject[]
+) => {
     if (!geometry) return;
 
     const title = getTitleFromProps(props);
@@ -107,7 +131,7 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
                 type: 'point',
                 title,
                 description,
-                position: toLatLng(geometry.coordinates)
+                position: toLatLng(geometry.coordinates as number[])
             });
             break;
             
@@ -118,27 +142,29 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
                 type: 'polyline',
                 title,
                 description,
-                positions: (geometry.coordinates || []).map((c: number[]) => toLatLng(c))
+                positions: ((geometry.coordinates as number[][]) || []).map((c: number[]) => toLatLng(c))
             });
             break;
             
-        case 'Polygon':
+        case 'Polygon': {
              // Handle simple polygon (outer ring only for this app's data model)
-             if (geometry.coordinates && geometry.coordinates.length > 0) {
+             const rings = geometry.coordinates as number[][] | undefined;
+             if (rings && rings.length > 0) {
                 objects.push({
                     id: crypto.randomUUID(),
                     layerId,
                     type: 'polygon',
                     title,
                     description,
-                    positions: geometry.coordinates[0].map((c: number[]) => toLatLng(c))
+                    positions: rings[0].map((c: number[]) => toLatLng(c))
                 });
              }
             break;
+        }
             
         case 'GeometryCollection':
             if (geometry.geometries && Array.isArray(geometry.geometries)) {
-                geometry.geometries.forEach((g: any) => {
+                geometry.geometries.forEach((g) => {
                     extractObjectsFromGeometry(g, props, layerId, objects);
                 });
             }
@@ -146,7 +172,7 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
 
         case 'MultiPoint':
              if (geometry.coordinates && Array.isArray(geometry.coordinates)) {
-                 geometry.coordinates.forEach((coords: number[]) => {
+                 (geometry.coordinates as number[][]).forEach((coords: number[]) => {
                      extractObjectsFromGeometry({ type: 'Point', coordinates: coords }, props, layerId, objects);
                  });
              }
@@ -154,7 +180,7 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
 
         case 'MultiLineString':
              if (geometry.coordinates && Array.isArray(geometry.coordinates)) {
-                 geometry.coordinates.forEach((coords: number[][]) => {
+                 (geometry.coordinates as number[][][]).forEach((coords: number[][]) => {
                      extractObjectsFromGeometry({ type: 'LineString', coordinates: coords }, props, layerId, objects);
                  });
              }
@@ -162,7 +188,7 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
              
          case 'MultiPolygon':
              if (geometry.coordinates && Array.isArray(geometry.coordinates)) {
-                 geometry.coordinates.forEach((coords: number[][][]) => {
+                 (geometry.coordinates as number[][][][]).forEach((coords: number[][][]) => {
                      extractObjectsFromGeometry({ type: 'Polygon', coordinates: coords }, props, layerId, objects);
                  });
              }
@@ -170,14 +196,14 @@ const extractObjectsFromGeometry = (geometry: any, props: any, layerId: string, 
     }
 };
 
-const processGeoJSON = (fc: any, layerId: string): MapObject[] => {
+const processGeoJSON = (fc: ParsedFile | null, layerId: string): MapObject[] => {
   const objects: MapObject[] = [];
 
   if (!fc) return objects;
 
   // 1. Handle FeatureCollection (Standard)
   if (fc.type === 'FeatureCollection' && Array.isArray(fc.features)) {
-      fc.features.forEach((feature: any) => {
+      fc.features.forEach((feature) => {
           extractObjectsFromGeometry(feature.geometry, feature.properties || {}, layerId, objects);
       });
   } 
@@ -213,7 +239,7 @@ export const importFile = async (file: File): Promise<ImportResult> => {
   };
 
   try {
-    let geoJSON: any = null;
+    let geoJSON: ParsedFile | null = null;
 
     if (extension === 'kmz') {
       const zip = new JSZip();
@@ -252,7 +278,7 @@ export const importFile = async (file: File): Promise<ImportResult> => {
           try {
               geoJSON = JSON.parse(contentString);
               console.warn("File extension was .kml but content was JSON. Parsed as GeoJSON.");
-          } catch (e) {
+          } catch {
               throw new Error("Invalid KML file: " + parserErrors[0].textContent);
           }
       }
@@ -261,7 +287,7 @@ export const importFile = async (file: File): Promise<ImportResult> => {
         contentString = await file.text();
         try {
             geoJSON = JSON.parse(contentString);
-        } catch (e) {
+        } catch {
             throw new Error("Failed to parse JSON content.");
         }
     } else {

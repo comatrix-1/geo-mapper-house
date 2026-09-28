@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapBoard from './components/MapBoard';
 import LayerSidebar from './components/LayerSidebar';
 import Toolbar from './components/Toolbar';
@@ -63,10 +63,7 @@ const App: React.FC = () => {
             const data = await loadUserData(currentUser.uid);
             if (data.layers) {
                 setLayers(data.layers);
-                // Fix active layer if it disappeared
-                if (!data.layers.find(l => l.id === activeLayerId)) {
-                    setActiveLayerId(data.layers[0]?.id || DEFAULT_LAYERS[0].id);
-                }
+                // Stale active layer is repaired by the render-phase check below
             } else {
                 // Initialize default layers for new user in background
                 saveLayers(currentUser.uid, DEFAULT_LAYERS);
@@ -80,12 +77,20 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []); // Run once on mount
 
-  // Data integrity: Ensure active layer always exists locally
-  useEffect(() => {
+  // Data integrity: Ensure the active layer always exists locally.
+  // Render-phase state adjustment (the React-endorsed alternative to a
+  // setState-in-effect reset): compare against a snapshot of the previous
+  // values and repair state only when they actually changed.
+  const [prevLayerState, setPrevLayerState] = useState({ layers, activeLayerId });
+  if (
+      prevLayerState.layers !== layers ||
+      prevLayerState.activeLayerId !== activeLayerId
+  ) {
+      setPrevLayerState({ layers, activeLayerId });
       if (layers.length > 0 && !layers.find(l => l.id === activeLayerId)) {
           setActiveLayerId(layers[0].id);
       }
-  }, [layers, activeLayerId]);
+  }
 
 
   // --- Handlers (With Persistence) ---
@@ -227,7 +232,9 @@ const App: React.FC = () => {
 
   const handleSetDrawingMode = (mode: DrawingMode) => {
     setDrawingMode(mode);
-    if (mode !== 'ruler') {
+    // Fresh start whenever the ruler tool is (re)entered; a finished trace
+    // stays on the map until the user picks the ruler again.
+    if (mode === 'ruler') {
         setRulerPoints([]);
     }
     if (mode !== 'none') {
