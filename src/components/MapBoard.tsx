@@ -117,7 +117,6 @@ interface MapBoardProps {
   setRulerPoints: React.Dispatch<React.SetStateAction<LatLngLiteral[]>>;
   flyToTarget?: { id: string; time: number } | null;
   onObjectUpdate?: (updatedObject: MapObject) => void;
-  onObjectDelete?: (id: string) => void;
   onNewObject?: (obj: MapObject) => void;
 }
 
@@ -134,7 +133,6 @@ const MapBoard: React.FC<MapBoardProps> = ({
   setRulerPoints,
   flyToTarget,
   onObjectUpdate,
-  onObjectDelete,
   onNewObject,
 }) => {
   const cursor = drawingMode !== "none" ? "crosshair" : null;
@@ -150,20 +148,6 @@ const MapBoard: React.FC<MapBoardProps> = ({
 
     // Persist
     if (onObjectUpdate) onObjectUpdate(updatedObject);
-  };
-
-  const updateObjectMeta = (id: string, title: string, desc: string) => {
-    handleObjectUpdate(id, { title, description: desc });
-  };
-
-  const deleteObject = (id: string) => {
-    // Optimistic UI Update
-    setObjects((prev) => prev.filter((o) => o.id !== id));
-    if (selectedObjectId === id) {
-      setSelectedObjectId(null);
-    }
-    // Persist
-    if (onObjectDelete) onObjectDelete(id);
   };
 
   const handleNewObject = (obj: MapObject) => {
@@ -219,8 +203,6 @@ const MapBoard: React.FC<MapBoardProps> = ({
             interactive: isInteractive,
             setSelectedObjectId,
             onUpdate: handleObjectUpdate,
-            updateObjectMeta,
-            onDelete: deleteObject,
           };
 
           if (obj.type === "point") return <EditablePoint {...props} />;

@@ -45,6 +45,10 @@ export interface Layer {
   name: string;
   visible: boolean;
   style: LayerStyle;
+  /** Ordered map-object ids for sidebar display. Optional: absent means
+   * natural order; the list self-heals against members (stale ids dropped,
+   * new members appended) whenever it is consulted. */
+  objectOrder?: string[];
 }
 
 export interface RulerState {

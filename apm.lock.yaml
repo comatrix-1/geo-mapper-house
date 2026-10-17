@@ -1,0 +1,4343 @@
+lockfile_version: '1'
+apm_version: 0.33.0
+dependencies:
+- repo_url: obra/superpowers
+  name: superpowers
+  host: github.com
+  resolved_commit: 8ca22dba9a94f28898bbce59f2537ff4d87c747d
+  version: 6.4.2
+  package_type: skill_bundle
+  deployed_files:
+  - .agents/skills/brainstorming
+  - .agents/skills/brainstorming/SKILL.md
+  - .agents/skills/brainstorming/scripts/frame-template.html
+  - .agents/skills/brainstorming/scripts/helper.js
+  - .agents/skills/brainstorming/scripts/server.cjs
+  - .agents/skills/brainstorming/scripts/start-server.sh
+  - .agents/skills/brainstorming/scripts/stop-server.sh
+  - .agents/skills/brainstorming/spec-document-reviewer-prompt.md
+  - .agents/skills/brainstorming/visual-companion.md
+  - .agents/skills/diagnosing-superpowers
+  - .agents/skills/diagnosing-superpowers/SKILL.md
+  - .agents/skills/diagnosing-superpowers/prompts/analyst-common.md
+  - .agents/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  - .agents/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  - .agents/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  - .agents/skills/diagnosing-superpowers/prompts/repeated-work.md
+  - .agents/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  - .agents/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  - .agents/skills/diagnosing-superpowers/prompts/scrub.md
+  - .agents/skills/diagnosing-superpowers/prompts/similar-session.md
+  - .agents/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  - .agents/skills/diagnosing-superpowers/prompts/stumbles.md
+  - .agents/skills/diagnosing-superpowers/references/context-safety.md
+  - .agents/skills/diagnosing-superpowers/references/github-issues.md
+  - .agents/skills/diagnosing-superpowers/references/redaction-policy.md
+  - .agents/skills/diagnosing-superpowers/references/session-discovery.md
+  - .agents/skills/diagnosing-superpowers/templates/bundle-README.md
+  - .agents/skills/diagnosing-superpowers/templates/case.md
+  - .agents/skills/diagnosing-superpowers/templates/issue.md
+  - .agents/skills/diagnosing-superpowers/templates/report.md
+  - .agents/skills/dispatching-parallel-agents
+  - .agents/skills/dispatching-parallel-agents/SKILL.md
+  - .agents/skills/executing-plans
+  - .agents/skills/executing-plans/SKILL.md
+  - .agents/skills/executing-plans/scripts/task-done
+  - .agents/skills/executing-plans/scripts/task-start
+  - .agents/skills/finishing-a-development-branch
+  - .agents/skills/finishing-a-development-branch/SKILL.md
+  - .agents/skills/receiving-code-review
+  - .agents/skills/receiving-code-review/SKILL.md
+  - .agents/skills/requesting-code-review
+  - .agents/skills/requesting-code-review/SKILL.md
+  - .agents/skills/requesting-code-review/code-reviewer.md
+  - .agents/skills/subagent-driven-development
+  - .agents/skills/subagent-driven-development/SKILL.md
+  - .agents/skills/subagent-driven-development/implementer-prompt.md
+  - .agents/skills/subagent-driven-development/re-review-prompt.md
+  - .agents/skills/subagent-driven-development/scripts/review-package
+  - .agents/skills/subagent-driven-development/scripts/sdd-workspace
+  - .agents/skills/subagent-driven-development/scripts/task-brief
+  - .agents/skills/subagent-driven-development/task-reviewer-prompt.md
+  - .agents/skills/systematic-debugging
+  - .agents/skills/systematic-debugging/CREATION-LOG.md
+  - .agents/skills/systematic-debugging/SKILL.md
+  - .agents/skills/systematic-debugging/condition-based-waiting-example.ts
+  - .agents/skills/systematic-debugging/condition-based-waiting.md
+  - .agents/skills/systematic-debugging/defense-in-depth.md
+  - .agents/skills/systematic-debugging/find-polluter.sh
+  - .agents/skills/systematic-debugging/root-cause-tracing.md
+  - .agents/skills/systematic-debugging/test-academic.md
+  - .agents/skills/systematic-debugging/test-pressure-1.md
+  - .agents/skills/systematic-debugging/test-pressure-2.md
+  - .agents/skills/systematic-debugging/test-pressure-3.md
+  - .agents/skills/test-driven-development
+  - .agents/skills/test-driven-development/SKILL.md
+  - .agents/skills/test-driven-development/writing-good-tests.md
+  - .agents/skills/using-git-worktrees
+  - .agents/skills/using-git-worktrees/SKILL.md
+  - .agents/skills/using-superpowers
+  - .agents/skills/using-superpowers/SKILL.md
+  - .agents/skills/using-superpowers/references/antigravity-tools.md
+  - .agents/skills/using-superpowers/references/claude-code-tools.md
+  - .agents/skills/using-superpowers/references/codex-tools.md
+  - .agents/skills/using-superpowers/references/gemini-tools.md
+  - .agents/skills/using-superpowers/references/hermes-tools.md
+  - .agents/skills/using-superpowers/references/muse-tools.md
+  - .agents/skills/using-superpowers/references/pi-tools.md
+  - .agents/skills/verification-before-completion
+  - .agents/skills/verification-before-completion/SKILL.md
+  - .agents/skills/writing-plans
+  - .agents/skills/writing-plans/SKILL.md
+  - .agents/skills/writing-skills
+  - .agents/skills/writing-skills/SKILL.md
+  - .agents/skills/writing-skills/anthropic-best-practices.md
+  - .agents/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  - .agents/skills/writing-skills/graphviz-conventions.dot
+  - .agents/skills/writing-skills/persuasion-principles.md
+  - .agents/skills/writing-skills/render-graphs.js
+  - .agents/skills/writing-skills/testing-skills-with-subagents.md
+  - .claude/hooks/superpowers/hooks/run-hook.cmd
+  - .claude/hooks/superpowers/hooks/session-start
+  - .claude/skills/brainstorming
+  - .claude/skills/brainstorming/SKILL.md
+  - .claude/skills/brainstorming/scripts/frame-template.html
+  - .claude/skills/brainstorming/scripts/helper.js
+  - .claude/skills/brainstorming/scripts/server.cjs
+  - .claude/skills/brainstorming/scripts/start-server.sh
+  - .claude/skills/brainstorming/scripts/stop-server.sh
+  - .claude/skills/brainstorming/spec-document-reviewer-prompt.md
+  - .claude/skills/brainstorming/visual-companion.md
+  - .claude/skills/diagnosing-superpowers
+  - .claude/skills/diagnosing-superpowers/SKILL.md
+  - .claude/skills/diagnosing-superpowers/prompts/analyst-common.md
+  - .claude/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  - .claude/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  - .claude/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  - .claude/skills/diagnosing-superpowers/prompts/repeated-work.md
+  - .claude/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  - .claude/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  - .claude/skills/diagnosing-superpowers/prompts/scrub.md
+  - .claude/skills/diagnosing-superpowers/prompts/similar-session.md
+  - .claude/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  - .claude/skills/diagnosing-superpowers/prompts/stumbles.md
+  - .claude/skills/diagnosing-superpowers/references/context-safety.md
+  - .claude/skills/diagnosing-superpowers/references/github-issues.md
+  - .claude/skills/diagnosing-superpowers/references/redaction-policy.md
+  - .claude/skills/diagnosing-superpowers/references/session-discovery.md
+  - .claude/skills/diagnosing-superpowers/templates/bundle-README.md
+  - .claude/skills/diagnosing-superpowers/templates/case.md
+  - .claude/skills/diagnosing-superpowers/templates/issue.md
+  - .claude/skills/diagnosing-superpowers/templates/report.md
+  - .claude/skills/dispatching-parallel-agents
+  - .claude/skills/dispatching-parallel-agents/SKILL.md
+  - .claude/skills/executing-plans
+  - .claude/skills/executing-plans/SKILL.md
+  - .claude/skills/executing-plans/scripts/task-done
+  - .claude/skills/executing-plans/scripts/task-start
+  - .claude/skills/finishing-a-development-branch
+  - .claude/skills/finishing-a-development-branch/SKILL.md
+  - .claude/skills/receiving-code-review
+  - .claude/skills/receiving-code-review/SKILL.md
+  - .claude/skills/requesting-code-review
+  - .claude/skills/requesting-code-review/SKILL.md
+  - .claude/skills/requesting-code-review/code-reviewer.md
+  - .claude/skills/subagent-driven-development
+  - .claude/skills/subagent-driven-development/SKILL.md
+  - .claude/skills/subagent-driven-development/implementer-prompt.md
+  - .claude/skills/subagent-driven-development/re-review-prompt.md
+  - .claude/skills/subagent-driven-development/scripts/review-package
+  - .claude/skills/subagent-driven-development/scripts/sdd-workspace
+  - .claude/skills/subagent-driven-development/scripts/task-brief
+  - .claude/skills/subagent-driven-development/task-reviewer-prompt.md
+  - .claude/skills/systematic-debugging
+  - .claude/skills/systematic-debugging/CREATION-LOG.md
+  - .claude/skills/systematic-debugging/SKILL.md
+  - .claude/skills/systematic-debugging/condition-based-waiting-example.ts
+  - .claude/skills/systematic-debugging/condition-based-waiting.md
+  - .claude/skills/systematic-debugging/defense-in-depth.md
+  - .claude/skills/systematic-debugging/find-polluter.sh
+  - .claude/skills/systematic-debugging/root-cause-tracing.md
+  - .claude/skills/systematic-debugging/test-academic.md
+  - .claude/skills/systematic-debugging/test-pressure-1.md
+  - .claude/skills/systematic-debugging/test-pressure-2.md
+  - .claude/skills/systematic-debugging/test-pressure-3.md
+  - .claude/skills/test-driven-development
+  - .claude/skills/test-driven-development/SKILL.md
+  - .claude/skills/test-driven-development/writing-good-tests.md
+  - .claude/skills/using-git-worktrees
+  - .claude/skills/using-git-worktrees/SKILL.md
+  - .claude/skills/using-superpowers
+  - .claude/skills/using-superpowers/SKILL.md
+  - .claude/skills/using-superpowers/references/antigravity-tools.md
+  - .claude/skills/using-superpowers/references/claude-code-tools.md
+  - .claude/skills/using-superpowers/references/codex-tools.md
+  - .claude/skills/using-superpowers/references/gemini-tools.md
+  - .claude/skills/using-superpowers/references/hermes-tools.md
+  - .claude/skills/using-superpowers/references/muse-tools.md
+  - .claude/skills/using-superpowers/references/pi-tools.md
+  - .claude/skills/verification-before-completion
+  - .claude/skills/verification-before-completion/SKILL.md
+  - .claude/skills/writing-plans
+  - .claude/skills/writing-plans/SKILL.md
+  - .claude/skills/writing-skills
+  - .claude/skills/writing-skills/SKILL.md
+  - .claude/skills/writing-skills/anthropic-best-practices.md
+  - .claude/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  - .claude/skills/writing-skills/graphviz-conventions.dot
+  - .claude/skills/writing-skills/persuasion-principles.md
+  - .claude/skills/writing-skills/render-graphs.js
+  - .claude/skills/writing-skills/testing-skills-with-subagents.md
+  - .codex/hooks/superpowers/hooks/run-hook.cmd
+  - .codex/hooks/superpowers/hooks/session-start
+  - .kiro/hooks/superpowers-hooks-sessionstart-1.json
+  - .kiro/hooks/superpowers/hooks/run-hook.cmd
+  - .kiro/hooks/superpowers/hooks/session-start
+  - .kiro/skills/brainstorming
+  - .kiro/skills/brainstorming/SKILL.md
+  - .kiro/skills/brainstorming/scripts/frame-template.html
+  - .kiro/skills/brainstorming/scripts/helper.js
+  - .kiro/skills/brainstorming/scripts/server.cjs
+  - .kiro/skills/brainstorming/scripts/start-server.sh
+  - .kiro/skills/brainstorming/scripts/stop-server.sh
+  - .kiro/skills/brainstorming/spec-document-reviewer-prompt.md
+  - .kiro/skills/brainstorming/visual-companion.md
+  - .kiro/skills/diagnosing-superpowers
+  - .kiro/skills/diagnosing-superpowers/SKILL.md
+  - .kiro/skills/diagnosing-superpowers/prompts/analyst-common.md
+  - .kiro/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  - .kiro/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  - .kiro/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  - .kiro/skills/diagnosing-superpowers/prompts/repeated-work.md
+  - .kiro/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  - .kiro/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  - .kiro/skills/diagnosing-superpowers/prompts/scrub.md
+  - .kiro/skills/diagnosing-superpowers/prompts/similar-session.md
+  - .kiro/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  - .kiro/skills/diagnosing-superpowers/prompts/stumbles.md
+  - .kiro/skills/diagnosing-superpowers/references/context-safety.md
+  - .kiro/skills/diagnosing-superpowers/references/github-issues.md
+  - .kiro/skills/diagnosing-superpowers/references/redaction-policy.md
+  - .kiro/skills/diagnosing-superpowers/references/session-discovery.md
+  - .kiro/skills/diagnosing-superpowers/templates/bundle-README.md
+  - .kiro/skills/diagnosing-superpowers/templates/case.md
+  - .kiro/skills/diagnosing-superpowers/templates/issue.md
+  - .kiro/skills/diagnosing-superpowers/templates/report.md
+  - .kiro/skills/dispatching-parallel-agents
+  - .kiro/skills/dispatching-parallel-agents/SKILL.md
+  - .kiro/skills/executing-plans
+  - .kiro/skills/executing-plans/SKILL.md
+  - .kiro/skills/executing-plans/scripts/task-done
+  - .kiro/skills/executing-plans/scripts/task-start
+  - .kiro/skills/finishing-a-development-branch
+  - .kiro/skills/finishing-a-development-branch/SKILL.md
+  - .kiro/skills/receiving-code-review
+  - .kiro/skills/receiving-code-review/SKILL.md
+  - .kiro/skills/requesting-code-review
+  - .kiro/skills/requesting-code-review/SKILL.md
+  - .kiro/skills/requesting-code-review/code-reviewer.md
+  - .kiro/skills/subagent-driven-development
+  - .kiro/skills/subagent-driven-development/SKILL.md
+  - .kiro/skills/subagent-driven-development/implementer-prompt.md
+  - .kiro/skills/subagent-driven-development/re-review-prompt.md
+  - .kiro/skills/subagent-driven-development/scripts/review-package
+  - .kiro/skills/subagent-driven-development/scripts/sdd-workspace
+  - .kiro/skills/subagent-driven-development/scripts/task-brief
+  - .kiro/skills/subagent-driven-development/task-reviewer-prompt.md
+  - .kiro/skills/systematic-debugging
+  - .kiro/skills/systematic-debugging/CREATION-LOG.md
+  - .kiro/skills/systematic-debugging/SKILL.md
+  - .kiro/skills/systematic-debugging/condition-based-waiting-example.ts
+  - .kiro/skills/systematic-debugging/condition-based-waiting.md
+  - .kiro/skills/systematic-debugging/defense-in-depth.md
+  - .kiro/skills/systematic-debugging/find-polluter.sh
+  - .kiro/skills/systematic-debugging/root-cause-tracing.md
+  - .kiro/skills/systematic-debugging/test-academic.md
+  - .kiro/skills/systematic-debugging/test-pressure-1.md
+  - .kiro/skills/systematic-debugging/test-pressure-2.md
+  - .kiro/skills/systematic-debugging/test-pressure-3.md
+  - .kiro/skills/test-driven-development
+  - .kiro/skills/test-driven-development/SKILL.md
+  - .kiro/skills/test-driven-development/writing-good-tests.md
+  - .kiro/skills/using-git-worktrees
+  - .kiro/skills/using-git-worktrees/SKILL.md
+  - .kiro/skills/using-superpowers
+  - .kiro/skills/using-superpowers/SKILL.md
+  - .kiro/skills/using-superpowers/references/antigravity-tools.md
+  - .kiro/skills/using-superpowers/references/claude-code-tools.md
+  - .kiro/skills/using-superpowers/references/codex-tools.md
+  - .kiro/skills/using-superpowers/references/gemini-tools.md
+  - .kiro/skills/using-superpowers/references/hermes-tools.md
+  - .kiro/skills/using-superpowers/references/muse-tools.md
+  - .kiro/skills/using-superpowers/references/pi-tools.md
+  - .kiro/skills/verification-before-completion
+  - .kiro/skills/verification-before-completion/SKILL.md
+  - .kiro/skills/writing-plans
+  - .kiro/skills/writing-plans/SKILL.md
+  - .kiro/skills/writing-skills
+  - .kiro/skills/writing-skills/SKILL.md
+  - .kiro/skills/writing-skills/anthropic-best-practices.md
+  - .kiro/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  - .kiro/skills/writing-skills/graphviz-conventions.dot
+  - .kiro/skills/writing-skills/persuasion-principles.md
+  - .kiro/skills/writing-skills/render-graphs.js
+  - .kiro/skills/writing-skills/testing-skills-with-subagents.md
+  deployed_file_hashes:
+    .agents/skills/brainstorming/SKILL.md: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+    .agents/skills/brainstorming/scripts/frame-template.html: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+    .agents/skills/brainstorming/scripts/helper.js: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+    .agents/skills/brainstorming/scripts/server.cjs: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+    .agents/skills/brainstorming/scripts/start-server.sh: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+    .agents/skills/brainstorming/scripts/stop-server.sh: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+    .agents/skills/brainstorming/spec-document-reviewer-prompt.md: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+    .agents/skills/brainstorming/visual-companion.md: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+    .agents/skills/diagnosing-superpowers/SKILL.md: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+    .agents/skills/diagnosing-superpowers/prompts/analyst-common.md: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+    .agents/skills/diagnosing-superpowers/prompts/cost-and-time.md: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+    .agents/skills/diagnosing-superpowers/prompts/plan-adherence.md: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+    .agents/skills/diagnosing-superpowers/prompts/quality-evidence.md: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+    .agents/skills/diagnosing-superpowers/prompts/repeated-work.md: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+    .agents/skills/diagnosing-superpowers/prompts/request-conflicts.md: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+    .agents/skills/diagnosing-superpowers/prompts/scrub-audit.md: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+    .agents/skills/diagnosing-superpowers/prompts/scrub.md: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+    .agents/skills/diagnosing-superpowers/prompts/similar-session.md: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+    .agents/skills/diagnosing-superpowers/prompts/skill-timeline.md: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+    .agents/skills/diagnosing-superpowers/prompts/stumbles.md: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+    .agents/skills/diagnosing-superpowers/references/context-safety.md: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+    .agents/skills/diagnosing-superpowers/references/github-issues.md: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+    .agents/skills/diagnosing-superpowers/references/redaction-policy.md: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+    .agents/skills/diagnosing-superpowers/references/session-discovery.md: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+    .agents/skills/diagnosing-superpowers/templates/bundle-README.md: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+    .agents/skills/diagnosing-superpowers/templates/case.md: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+    .agents/skills/diagnosing-superpowers/templates/issue.md: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+    .agents/skills/diagnosing-superpowers/templates/report.md: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+    .agents/skills/dispatching-parallel-agents/SKILL.md: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+    .agents/skills/executing-plans/SKILL.md: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+    .agents/skills/executing-plans/scripts/task-done: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+    .agents/skills/executing-plans/scripts/task-start: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+    .agents/skills/finishing-a-development-branch/SKILL.md: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+    .agents/skills/receiving-code-review/SKILL.md: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+    .agents/skills/requesting-code-review/SKILL.md: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+    .agents/skills/requesting-code-review/code-reviewer.md: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+    .agents/skills/subagent-driven-development/SKILL.md: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+    .agents/skills/subagent-driven-development/implementer-prompt.md: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+    .agents/skills/subagent-driven-development/re-review-prompt.md: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+    .agents/skills/subagent-driven-development/scripts/review-package: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+    .agents/skills/subagent-driven-development/scripts/sdd-workspace: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+    .agents/skills/subagent-driven-development/scripts/task-brief: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+    .agents/skills/subagent-driven-development/task-reviewer-prompt.md: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+    .agents/skills/systematic-debugging/CREATION-LOG.md: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+    .agents/skills/systematic-debugging/SKILL.md: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+    .agents/skills/systematic-debugging/condition-based-waiting-example.ts: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+    .agents/skills/systematic-debugging/condition-based-waiting.md: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+    .agents/skills/systematic-debugging/defense-in-depth.md: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+    .agents/skills/systematic-debugging/find-polluter.sh: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+    .agents/skills/systematic-debugging/root-cause-tracing.md: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+    .agents/skills/systematic-debugging/test-academic.md: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+    .agents/skills/systematic-debugging/test-pressure-1.md: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+    .agents/skills/systematic-debugging/test-pressure-2.md: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+    .agents/skills/systematic-debugging/test-pressure-3.md: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+    .agents/skills/test-driven-development/SKILL.md: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+    .agents/skills/test-driven-development/writing-good-tests.md: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+    .agents/skills/using-git-worktrees/SKILL.md: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+    .agents/skills/using-superpowers/SKILL.md: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+    .agents/skills/using-superpowers/references/antigravity-tools.md: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+    .agents/skills/using-superpowers/references/claude-code-tools.md: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+    .agents/skills/using-superpowers/references/codex-tools.md: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+    .agents/skills/using-superpowers/references/gemini-tools.md: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+    .agents/skills/using-superpowers/references/hermes-tools.md: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+    .agents/skills/using-superpowers/references/muse-tools.md: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+    .agents/skills/using-superpowers/references/pi-tools.md: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+    .agents/skills/verification-before-completion/SKILL.md: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+    .agents/skills/writing-plans/SKILL.md: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+    .agents/skills/writing-skills/SKILL.md: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+    .agents/skills/writing-skills/anthropic-best-practices.md: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+    .agents/skills/writing-skills/examples/CLAUDE_MD_TESTING.md: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+    .agents/skills/writing-skills/graphviz-conventions.dot: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+    .agents/skills/writing-skills/persuasion-principles.md: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+    .agents/skills/writing-skills/render-graphs.js: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+    .agents/skills/writing-skills/testing-skills-with-subagents.md: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+    .claude/hooks/superpowers/hooks/run-hook.cmd: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+    .claude/hooks/superpowers/hooks/session-start: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+    .claude/skills/brainstorming/SKILL.md: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+    .claude/skills/brainstorming/scripts/frame-template.html: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+    .claude/skills/brainstorming/scripts/helper.js: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+    .claude/skills/brainstorming/scripts/server.cjs: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+    .claude/skills/brainstorming/scripts/start-server.sh: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+    .claude/skills/brainstorming/scripts/stop-server.sh: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+    .claude/skills/brainstorming/spec-document-reviewer-prompt.md: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+    .claude/skills/brainstorming/visual-companion.md: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+    .claude/skills/diagnosing-superpowers/SKILL.md: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+    .claude/skills/diagnosing-superpowers/prompts/analyst-common.md: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+    .claude/skills/diagnosing-superpowers/prompts/cost-and-time.md: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+    .claude/skills/diagnosing-superpowers/prompts/plan-adherence.md: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+    .claude/skills/diagnosing-superpowers/prompts/quality-evidence.md: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+    .claude/skills/diagnosing-superpowers/prompts/repeated-work.md: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+    .claude/skills/diagnosing-superpowers/prompts/request-conflicts.md: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+    .claude/skills/diagnosing-superpowers/prompts/scrub-audit.md: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+    .claude/skills/diagnosing-superpowers/prompts/scrub.md: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+    .claude/skills/diagnosing-superpowers/prompts/similar-session.md: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+    .claude/skills/diagnosing-superpowers/prompts/skill-timeline.md: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+    .claude/skills/diagnosing-superpowers/prompts/stumbles.md: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+    .claude/skills/diagnosing-superpowers/references/context-safety.md: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+    .claude/skills/diagnosing-superpowers/references/github-issues.md: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+    .claude/skills/diagnosing-superpowers/references/redaction-policy.md: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+    .claude/skills/diagnosing-superpowers/references/session-discovery.md: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+    .claude/skills/diagnosing-superpowers/templates/bundle-README.md: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+    .claude/skills/diagnosing-superpowers/templates/case.md: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+    .claude/skills/diagnosing-superpowers/templates/issue.md: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+    .claude/skills/diagnosing-superpowers/templates/report.md: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+    .claude/skills/dispatching-parallel-agents/SKILL.md: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+    .claude/skills/executing-plans/SKILL.md: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+    .claude/skills/executing-plans/scripts/task-done: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+    .claude/skills/executing-plans/scripts/task-start: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+    .claude/skills/finishing-a-development-branch/SKILL.md: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+    .claude/skills/receiving-code-review/SKILL.md: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+    .claude/skills/requesting-code-review/SKILL.md: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+    .claude/skills/requesting-code-review/code-reviewer.md: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+    .claude/skills/subagent-driven-development/SKILL.md: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+    .claude/skills/subagent-driven-development/implementer-prompt.md: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+    .claude/skills/subagent-driven-development/re-review-prompt.md: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+    .claude/skills/subagent-driven-development/scripts/review-package: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+    .claude/skills/subagent-driven-development/scripts/sdd-workspace: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+    .claude/skills/subagent-driven-development/scripts/task-brief: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+    .claude/skills/subagent-driven-development/task-reviewer-prompt.md: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+    .claude/skills/systematic-debugging/CREATION-LOG.md: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+    .claude/skills/systematic-debugging/SKILL.md: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+    .claude/skills/systematic-debugging/condition-based-waiting-example.ts: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+    .claude/skills/systematic-debugging/condition-based-waiting.md: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+    .claude/skills/systematic-debugging/defense-in-depth.md: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+    .claude/skills/systematic-debugging/find-polluter.sh: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+    .claude/skills/systematic-debugging/root-cause-tracing.md: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+    .claude/skills/systematic-debugging/test-academic.md: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+    .claude/skills/systematic-debugging/test-pressure-1.md: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+    .claude/skills/systematic-debugging/test-pressure-2.md: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+    .claude/skills/systematic-debugging/test-pressure-3.md: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+    .claude/skills/test-driven-development/SKILL.md: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+    .claude/skills/test-driven-development/writing-good-tests.md: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+    .claude/skills/using-git-worktrees/SKILL.md: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+    .claude/skills/using-superpowers/SKILL.md: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+    .claude/skills/using-superpowers/references/antigravity-tools.md: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+    .claude/skills/using-superpowers/references/claude-code-tools.md: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+    .claude/skills/using-superpowers/references/codex-tools.md: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+    .claude/skills/using-superpowers/references/gemini-tools.md: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+    .claude/skills/using-superpowers/references/hermes-tools.md: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+    .claude/skills/using-superpowers/references/muse-tools.md: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+    .claude/skills/using-superpowers/references/pi-tools.md: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+    .claude/skills/verification-before-completion/SKILL.md: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+    .claude/skills/writing-plans/SKILL.md: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+    .claude/skills/writing-skills/SKILL.md: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+    .claude/skills/writing-skills/anthropic-best-practices.md: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+    .claude/skills/writing-skills/examples/CLAUDE_MD_TESTING.md: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+    .claude/skills/writing-skills/graphviz-conventions.dot: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+    .claude/skills/writing-skills/persuasion-principles.md: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+    .claude/skills/writing-skills/render-graphs.js: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+    .claude/skills/writing-skills/testing-skills-with-subagents.md: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+    .codex/hooks/superpowers/hooks/run-hook.cmd: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+    .codex/hooks/superpowers/hooks/session-start: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+    .kiro/hooks/superpowers-hooks-sessionstart-1.json: sha256:7ba0bfbb4e50f6fa984cacd0ef233287eff9289e5abaf001da683cf596eed97b
+    .kiro/hooks/superpowers/hooks/run-hook.cmd: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+    .kiro/hooks/superpowers/hooks/session-start: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+    .kiro/skills/brainstorming/SKILL.md: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+    .kiro/skills/brainstorming/scripts/frame-template.html: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+    .kiro/skills/brainstorming/scripts/helper.js: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+    .kiro/skills/brainstorming/scripts/server.cjs: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+    .kiro/skills/brainstorming/scripts/start-server.sh: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+    .kiro/skills/brainstorming/scripts/stop-server.sh: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+    .kiro/skills/brainstorming/spec-document-reviewer-prompt.md: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+    .kiro/skills/brainstorming/visual-companion.md: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+    .kiro/skills/diagnosing-superpowers/SKILL.md: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+    .kiro/skills/diagnosing-superpowers/prompts/analyst-common.md: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+    .kiro/skills/diagnosing-superpowers/prompts/cost-and-time.md: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+    .kiro/skills/diagnosing-superpowers/prompts/plan-adherence.md: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+    .kiro/skills/diagnosing-superpowers/prompts/quality-evidence.md: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+    .kiro/skills/diagnosing-superpowers/prompts/repeated-work.md: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+    .kiro/skills/diagnosing-superpowers/prompts/request-conflicts.md: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+    .kiro/skills/diagnosing-superpowers/prompts/scrub-audit.md: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+    .kiro/skills/diagnosing-superpowers/prompts/scrub.md: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+    .kiro/skills/diagnosing-superpowers/prompts/similar-session.md: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+    .kiro/skills/diagnosing-superpowers/prompts/skill-timeline.md: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+    .kiro/skills/diagnosing-superpowers/prompts/stumbles.md: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+    .kiro/skills/diagnosing-superpowers/references/context-safety.md: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+    .kiro/skills/diagnosing-superpowers/references/github-issues.md: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+    .kiro/skills/diagnosing-superpowers/references/redaction-policy.md: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+    .kiro/skills/diagnosing-superpowers/references/session-discovery.md: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+    .kiro/skills/diagnosing-superpowers/templates/bundle-README.md: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+    .kiro/skills/diagnosing-superpowers/templates/case.md: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+    .kiro/skills/diagnosing-superpowers/templates/issue.md: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+    .kiro/skills/diagnosing-superpowers/templates/report.md: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+    .kiro/skills/dispatching-parallel-agents/SKILL.md: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+    .kiro/skills/executing-plans/SKILL.md: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+    .kiro/skills/executing-plans/scripts/task-done: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+    .kiro/skills/executing-plans/scripts/task-start: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+    .kiro/skills/finishing-a-development-branch/SKILL.md: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+    .kiro/skills/receiving-code-review/SKILL.md: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+    .kiro/skills/requesting-code-review/SKILL.md: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+    .kiro/skills/requesting-code-review/code-reviewer.md: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+    .kiro/skills/subagent-driven-development/SKILL.md: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+    .kiro/skills/subagent-driven-development/implementer-prompt.md: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+    .kiro/skills/subagent-driven-development/re-review-prompt.md: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+    .kiro/skills/subagent-driven-development/scripts/review-package: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+    .kiro/skills/subagent-driven-development/scripts/sdd-workspace: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+    .kiro/skills/subagent-driven-development/scripts/task-brief: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+    .kiro/skills/subagent-driven-development/task-reviewer-prompt.md: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+    .kiro/skills/systematic-debugging/CREATION-LOG.md: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+    .kiro/skills/systematic-debugging/SKILL.md: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+    .kiro/skills/systematic-debugging/condition-based-waiting-example.ts: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+    .kiro/skills/systematic-debugging/condition-based-waiting.md: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+    .kiro/skills/systematic-debugging/defense-in-depth.md: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+    .kiro/skills/systematic-debugging/find-polluter.sh: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+    .kiro/skills/systematic-debugging/root-cause-tracing.md: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+    .kiro/skills/systematic-debugging/test-academic.md: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+    .kiro/skills/systematic-debugging/test-pressure-1.md: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+    .kiro/skills/systematic-debugging/test-pressure-2.md: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+    .kiro/skills/systematic-debugging/test-pressure-3.md: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+    .kiro/skills/test-driven-development/SKILL.md: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+    .kiro/skills/test-driven-development/writing-good-tests.md: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+    .kiro/skills/using-git-worktrees/SKILL.md: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+    .kiro/skills/using-superpowers/SKILL.md: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+    .kiro/skills/using-superpowers/references/antigravity-tools.md: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+    .kiro/skills/using-superpowers/references/claude-code-tools.md: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+    .kiro/skills/using-superpowers/references/codex-tools.md: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+    .kiro/skills/using-superpowers/references/gemini-tools.md: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+    .kiro/skills/using-superpowers/references/hermes-tools.md: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+    .kiro/skills/using-superpowers/references/muse-tools.md: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+    .kiro/skills/using-superpowers/references/pi-tools.md: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+    .kiro/skills/verification-before-completion/SKILL.md: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+    .kiro/skills/writing-plans/SKILL.md: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+    .kiro/skills/writing-skills/SKILL.md: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+    .kiro/skills/writing-skills/anthropic-best-practices.md: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+    .kiro/skills/writing-skills/examples/CLAUDE_MD_TESTING.md: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+    .kiro/skills/writing-skills/graphviz-conventions.dot: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+    .kiro/skills/writing-skills/persuasion-principles.md: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+    .kiro/skills/writing-skills/render-graphs.js: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+    .kiro/skills/writing-skills/testing-skills-with-subagents.md: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+  content_hash: sha256:7e60c3ec033ee4ee9ee3ba40fbb16d62f8b483f2276e6f57793ff511b15db54a
+  declared_license: MIT
+deployments:
+- kind: project-relative
+  target: claude
+  value: .claude/hooks/superpowers/hooks/run-hook.cmd
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+- kind: project-relative
+  target: claude
+  value: .claude/hooks/superpowers/hooks/session-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/scripts/frame-template.html
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/scripts/helper.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/scripts/server.cjs
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/scripts/start-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/scripts/stop-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/spec-document-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+- kind: project-relative
+  target: claude
+  value: .claude/skills/brainstorming/visual-companion.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/analyst-common.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/repeated-work.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/scrub.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/similar-session.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/prompts/stumbles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/references/context-safety.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/references/github-issues.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/references/redaction-policy.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/references/session-discovery.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/templates/bundle-README.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/templates/case.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/templates/issue.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/diagnosing-superpowers/templates/report.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+- kind: project-relative
+  target: claude
+  value: .claude/skills/dispatching-parallel-agents
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/dispatching-parallel-agents/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/executing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/executing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/executing-plans/scripts/task-done
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+- kind: project-relative
+  target: claude
+  value: .claude/skills/executing-plans/scripts/task-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+- kind: project-relative
+  target: claude
+  value: .claude/skills/finishing-a-development-branch
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/finishing-a-development-branch/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+- kind: project-relative
+  target: claude
+  value: .claude/skills/receiving-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/receiving-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+- kind: project-relative
+  target: claude
+  value: .claude/skills/requesting-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/requesting-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/requesting-code-review/code-reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/implementer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/re-review-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/scripts/review-package
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/scripts/sdd-workspace
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/scripts/task-brief
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+- kind: project-relative
+  target: claude
+  value: .claude/skills/subagent-driven-development/task-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/CREATION-LOG.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/condition-based-waiting-example.ts
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/condition-based-waiting.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/defense-in-depth.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/find-polluter.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/root-cause-tracing.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/test-academic.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/test-pressure-1.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/test-pressure-2.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+- kind: project-relative
+  target: claude
+  value: .claude/skills/systematic-debugging/test-pressure-3.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+- kind: project-relative
+  target: claude
+  value: .claude/skills/test-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/test-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+- kind: project-relative
+  target: claude
+  value: .claude/skills/test-driven-development/writing-good-tests.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-git-worktrees
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-git-worktrees/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/antigravity-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/claude-code-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/codex-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/gemini-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/hermes-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/muse-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+- kind: project-relative
+  target: claude
+  value: .claude/skills/using-superpowers/references/pi-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+- kind: project-relative
+  target: claude
+  value: .claude/skills/verification-before-completion
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/verification-before-completion/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/anthropic-best-practices.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/graphviz-conventions.dot
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/persuasion-principles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/render-graphs.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+- kind: project-relative
+  target: claude
+  value: .claude/skills/writing-skills/testing-skills-with-subagents.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/scripts/frame-template.html
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/scripts/helper.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/scripts/server.cjs
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/scripts/start-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/scripts/stop-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/spec-document-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+- kind: project-relative
+  target: codex
+  value: .agents/skills/brainstorming/visual-companion.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/analyst-common.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/repeated-work.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/scrub.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/similar-session.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/prompts/stumbles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/references/context-safety.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/references/github-issues.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/references/redaction-policy.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/references/session-discovery.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/templates/bundle-README.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/templates/case.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/templates/issue.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/diagnosing-superpowers/templates/report.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+- kind: project-relative
+  target: codex
+  value: .agents/skills/dispatching-parallel-agents
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/dispatching-parallel-agents/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/executing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/executing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/executing-plans/scripts/task-done
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+- kind: project-relative
+  target: codex
+  value: .agents/skills/executing-plans/scripts/task-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+- kind: project-relative
+  target: codex
+  value: .agents/skills/finishing-a-development-branch
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/finishing-a-development-branch/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+- kind: project-relative
+  target: codex
+  value: .agents/skills/receiving-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/receiving-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+- kind: project-relative
+  target: codex
+  value: .agents/skills/requesting-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/requesting-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/requesting-code-review/code-reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/implementer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/re-review-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/scripts/review-package
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/scripts/sdd-workspace
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/scripts/task-brief
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+- kind: project-relative
+  target: codex
+  value: .agents/skills/subagent-driven-development/task-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/CREATION-LOG.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/condition-based-waiting-example.ts
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/condition-based-waiting.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/defense-in-depth.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/find-polluter.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/root-cause-tracing.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/test-academic.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/test-pressure-1.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/test-pressure-2.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+- kind: project-relative
+  target: codex
+  value: .agents/skills/systematic-debugging/test-pressure-3.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+- kind: project-relative
+  target: codex
+  value: .agents/skills/test-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/test-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+- kind: project-relative
+  target: codex
+  value: .agents/skills/test-driven-development/writing-good-tests.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-git-worktrees
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-git-worktrees/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/antigravity-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/claude-code-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/codex-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/gemini-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/hermes-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/muse-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/using-superpowers/references/pi-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+- kind: project-relative
+  target: codex
+  value: .agents/skills/verification-before-completion
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/verification-before-completion/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/anthropic-best-practices.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/graphviz-conventions.dot
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/persuasion-principles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/render-graphs.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+- kind: project-relative
+  target: codex
+  value: .agents/skills/writing-skills/testing-skills-with-subagents.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+- kind: project-relative
+  target: codex
+  value: .codex/hooks/superpowers/hooks/run-hook.cmd
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+- kind: project-relative
+  target: codex
+  value: .codex/hooks/superpowers/hooks/session-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+- kind: project-relative
+  target: kiro
+  value: .kiro/hooks/superpowers-hooks-sessionstart-1.json
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:7ba0bfbb4e50f6fa984cacd0ef233287eff9289e5abaf001da683cf596eed97b
+- kind: project-relative
+  target: kiro
+  value: .kiro/hooks/superpowers/hooks/run-hook.cmd
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:d3d9c6199678dab2858e60509dde5e7414f13c2a2b5e48a38b1d368b6e1d6abb
+- kind: project-relative
+  target: kiro
+  value: .kiro/hooks/superpowers/hooks/session-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5e92229e49d7cff5e0355ab84b0bceb0d27d53c565b33210132ce6e413ee9665
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/scripts/frame-template.html
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6a8a4e58bd6a44b904e2e3c57de774481d909204597e1498de53f1b2fecc4c4e
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/scripts/helper.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:43c6d69954a46ec34a2a262bcc62a9a7e83e839c739f199cb72646d397c686e3
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/scripts/server.cjs
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2d2961ea8d11f56c5f4c3a1a68d22709efa5d7601a2246d8c880774e7e9e8412
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/scripts/start-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a4e5ae84275bcaacd2f84345afeabe59cf7b00ba080e123da7cc1fb226f12847
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/scripts/stop-server.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b5ccbbd57f62d3ed88993f7940b5ee0e5c0fc9b21c550c623da4f6292e47daf
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/spec-document-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:95a0a195de9d984be2fffa95bab16fc8c563bc296a9cfc5e9c29cb3ece0d7457
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/brainstorming/visual-companion.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6ffcb038b53254bd31debaa15e12dcd4ff24bd63d690e0b644ac6396701cf2e2
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a652f8132cc901eb5ca61f89157839f87a2f20aed037fc7a2b51051bc37cd19
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/analyst-common.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:88801c36070be2a54a8a9a29632b01ab21db053e2e76ee49b5252a9b74ca4090
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/cost-and-time.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe97a66d4db3b436816ef82694bda413b522b3a862dd41978da01e358fffecc4
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/plan-adherence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1dcbab82033598a2e9c9ee42e950d4b1822d2c871c02cef9e102cdd5cbbda113
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/quality-evidence.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:749d11cf678f379ed77a29274cad456634e0284aa523639a1a214a9f2b986eb1
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/repeated-work.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:895027f2dfa4b1b8bcdb7ac9aec8d45a80bff212fad6ec6cad5ab38fa68322f5
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/request-conflicts.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e800e38d8b7752c212c76c5c3ed75cd78b749684263ea0c313586f26af6f4b5c
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/scrub-audit.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5cc48f05a7f81f5f7e05e0c7ceafc0fb8774bcaf75fe88dcb5c7e408026c70ad
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/scrub.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:854cb3320cc5377b493cea2f72519d67983464882db68a0f408a7d0a0f040b8c
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/similar-session.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b190f713b463df2bb5ec3914647e204074d1bd50643a53159db6d13cace916c1
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/skill-timeline.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:45d604d583b57a77b9033eced8eb875ef342af70fcd66cf7d15c6dc89964890f
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/prompts/stumbles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1f2d1f048aff7b8b400006301f1ce8c232ecc7e9d5f705af27a849b2c03ea2e7
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/references/context-safety.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e6be2bd3495f454d4bedee9484d728d245d1fa656e11fc4ceec5693c16e4730a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/references/github-issues.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a656f5e15b21c7a200c39c038f5ede74b9d6ea3ceeb90f39af7e930c8d8424d6
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/references/redaction-policy.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b16f47074838fe2d7e609577d6f8b0ad460f8378b281a3f96ee23cb5a08bde
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/references/session-discovery.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:6d1dced083e5d978448a78df298cf515531b0eb39b2854a4a2afbffeb69a7435
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/templates/bundle-README.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2e6ddc6b106028d5ebd00a50ad93a77111d675c219ee1273cd0857869e8d51ec
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/templates/case.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:597892462be83bc478536ec91f7c285f6dd25d119c560734a3a180fe8471301d
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/templates/issue.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8f28dbfe60602f77dda76d81815cb4e2dce7d3e2a93348890e1581be8310ac1f
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/diagnosing-superpowers/templates/report.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:38295d0fd785e8608f330815c59ebd7047942002ec7085aecbed54681f56b0c1
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/dispatching-parallel-agents
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/dispatching-parallel-agents/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1968923066f3b707eb01d1992cdf4c42284c3855f70253b9cd5000ff45fca13c
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/executing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/executing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:7aaac2a4a9234d50c8d5f5caf4760e537047ba6fb516c03565b41f47d08edd8c
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/executing-plans/scripts/task-done
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f704dc216e0602f95c601b9ee1113c9a55cc1c5f6e4d149dddfba0fd3ad1c314
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/executing-plans/scripts/task-start
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f833693c8fce3700fc9f841562d80f8015cd40f652c168a3405ac3e46947a1fe
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/finishing-a-development-branch
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/finishing-a-development-branch/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8db5a922b242dd4e1bf824cb91c13b3e8d8e8a86d6ceaf7f0774eb9cce909d65
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/receiving-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/receiving-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:091df1629510af1b92fc4abd6f96732ebedb4cb2c0f3457e8f2740b0504a2438
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/requesting-code-review
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/requesting-code-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/requesting-code-review/code-reviewer.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82e370be6b3447523816286195571e4216ba56ba1ad6ad0e87862294c4c78dcb
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b70cb2ac89d1f3001bed53c288dbf740c4925a8b422e5d2694b9217bbad157cf
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/implementer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:81dd9d5a3fb0b09b96b5829f03b9796842f3199ef7591d1ba1c2db2a515f64d0
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/re-review-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0828a5e9cbb12ba49f14621dd8c3953c48c0fc383e75bb5494f055ed0d6d824f
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/scripts/review-package
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:f9275175b2276b1d5fdb1bae0bedaadd2a950659b7c6f311ea37ff85e1861b1f
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/scripts/sdd-workspace
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75ca46c756ba4209ca36e0d3d65567257ceb33bc7a6775b9dad946707cb3bd7b
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/scripts/task-brief
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:cc563538e09abf719b34ddf4b2fa7a65cf3b301729039dbfa923cb060f729146
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/subagent-driven-development/task-reviewer-prompt.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:bfed55c8f19d0ff6ed57b0fe09127c92890e9311c6c73917129598826bf9ebe8
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/CREATION-LOG.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c24733a5b1821bd6bed1fc950261f0b9f4e90097e0bbb96459d8179713730789
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/condition-based-waiting-example.ts
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:40ae5ebe497fdf310200e43fe986552546d0a22837c0d39e855db1cfd33eb88e
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/condition-based-waiting.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e89fec8400d6cd50f43407cec9fab50976ba4d55d0ec2eb51c0bd68036b54c26
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/defense-in-depth.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1e175fb86fc357e58c6aebf5441e481e1b7868b4380c0456b63a17eefbd18ba7
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/find-polluter.sh
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:dd7b8f13c4cc2a24b33ff87b18da9248f3e1c80a085c3316224f69ff0fa5c43c
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/root-cause-tracing.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:75b933b6a8c40bdb2031b10f21654395b56ec6ab6bc7b018c18d3fe57aeb7fb8
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/test-academic.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:fe2ba480d78ac0d686dc025f41c2a32a43d642bf533f91b0c6053a04d35d6486
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/test-pressure-1.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b6a915db0054577819834c79be9eb614e97bddba10d73768e1fbe91cfed048a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/test-pressure-2.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:b2030aeffba07050e8ad573ddf87486457c4a016a786bb326235bebd856f2016
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/systematic-debugging/test-pressure-3.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:96b50a52e2c7989c9cf20fb752c47c1e9a3a70dc362f8f7989f8f5b64dac7708
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/test-driven-development
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/test-driven-development/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/test-driven-development/writing-good-tests.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-git-worktrees
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-git-worktrees/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:8cfb86f121269e8f7f12361e6795c4f6738828340e28964c9229d365666c9edd
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/antigravity-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:4880f6de3da4e32f9659ebe7a72b9e0ebfff04e028c2ed96173f86d0387a04c0
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/claude-code-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:21479a3fee27448cab8748a3b5687e53bb257883bda9c070426f9a1ab5cebf1b
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/codex-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:1a38ad9b188c393052f58d95657a1c35ea6aafc8b5a27f198f3922912f70bbe7
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/gemini-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:62b9157bcb0ee3c6784e3d0da0798ddfa5872f9e0c34bea48f3079dabea71965
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/hermes-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2185c976a3c87503910e05e2aea58cc89bc8e569bb624b93df9958ac47a9190
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/muse-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:5a1da5c575fe18456ca71cd47ebfd8a38c745f8d82a67fe64d5b83080000eeb3
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/using-superpowers/references/pi-tools.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:703dbc83d23ecab9c6f388460c38abc482e9dee2fe6772a8c7a255152ad3a4d5
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/verification-before-completion
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/verification-before-completion/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-plans
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-plans/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: null
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:9cf8c7ba0fdc521f103299a17e2f681a3112b730a75c78a6881e41ce8e5f6c2a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/anthropic-best-practices.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:217629b356c09c9bd11017c9788e8fc654ca1b32c92d4a51cd490e16dd65e59a
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/examples/CLAUDE_MD_TESTING.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:0b379a3415e185d3c434b3ad283d8aa132f3022c2a4f210f168865b5986bcef0
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/graphviz-conventions.dot
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/persuasion-principles.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:a51bc9bf75189ea73a27b3fb504a2fdfdb966fb1f7f1cdf03203230a216ccc03
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/render-graphs.js
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c7f412cc629461c4d10287e668731874c0497707023e3e3f74a5355eb2cee196
+- kind: project-relative
+  target: kiro
+  value: .kiro/skills/writing-skills/testing-skills-with-subagents.md
+  runtime: null
+  scope: project
+  owners:
+  - obra/superpowers
+  active_owner: obra/superpowers
+  content_hash: sha256:c711346852c911b24a84aa161e0cff06a4cd7f4e2fa9e9c0a266cead5afcbade
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-introspection-debugging
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-introspection-debugging/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5357d123cf8cee6dc2e901542a28a19d7ee9e939e34528d27987897318bcfbf6
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-introspection-debugging/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:80b2eefc3f4f003335804ce3146383464eac16a393d937cc91f7b3a8f7fbc069
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-sort
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-sort/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:82325c9fb7a58d7eaeafc4eecaef4a1d9d6c14e2f4d52c61265dd9c78828ebc3
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/agent-sort/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:75cca9c8642a113b92eb62bd744362a3f7e6d6a4220d61904ddb784e0e1393d8
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/api-design
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/api-design/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5568a8b1e2e9ea1cc1433535ba8fcf9c21309b996108887343150d4fc76992e6
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/api-design/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:46c8bc7b5ccea34cc3ba4f90e36c36c0ad6e8109084ee77911a54bf3d6da1ac5
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/article-writing
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/article-writing/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6305169f1aaf57e293284aa21bf646d995079ae2921499f7800c7db42d57091f
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/article-writing/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:61cfe684a8f6018f9f12fd2ab4f29fc27f749dbe53124d55bfcec5fce60cba79
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/backend-patterns
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/backend-patterns/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d4d3c9c54b5bf5af3c1711fe16ef28db1538d4c272cfa0e4420da60c368fef02
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/backend-patterns/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f9ee88273743b1bc1d0a69c19d2544cc8f579688fc4b4518d68925e3f4a88c7a
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/benchmark-methodology
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/benchmark-methodology/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f2cba14bb87ff43f80c2eaec6311eee7ead4d8b89949864442362eb368acbbac
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/benchmark-methodology/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:fe04dd9cfefcc14fd2d8330b7b131df9643cda25729a04982e9aeba0d3201b3a
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:83c94b91d54d8bf1dcebccefce0d86f0dacf19372c65d2b25a03a9d102d1e86d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d1fbd005b15056f1b6ba5b3a2dc9ecaf29dbb974c54af3882c0d49f9e9c600b1
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/10_purpose-why.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d70beb1dcf73512e235a377c59ca43f544de084dd555701f99a65574b17939ea
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/20_positioning.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:50e2c71b8b4d6a44d59b45609c06aa258f6c16871a4d2a184f68983433e954c4
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/30_audience-niche.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:189e8d41d08df421fa5bad5d15e814334dc8fe706255701b277e258100b6007d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/40_personality-archetype.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:58b04b09cf1e206d1240fc01d8c77c22fcc9b9c0d8ef326ad418476589072182
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/50_voice-tone.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:cf69dc9573ed00561cfb8e7e489450ae644b90703a2d9315b77d8629af69bde3
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/60_narrative-story.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:46a6184f00ffa8d6900d59d58164f5e767012bc12dd67dc2b2ba53976d6811b9
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/70_founder-tension.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:88e7149f2ace5d3f726d33e5fb7ca2caddb7e3301574e849517e16277590ab39
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-discovery/references/90_SYNTHESIS.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:04d0215bb054685ab8f6956f8369a7eb9d39e16acd1f7ae5ffe46725f2c00c61
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-voice
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-voice/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:63bb7231f1ec358dcd6b4d9c8bceb212d3c2475be2dd2b8336e3c265bc6d5c03
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-voice/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1ece788cc1f61f7f9e877556b9ad89c35dc6898cbcf30ce5eb3f210f3d431cb1
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/brand-voice/references/voice-profile-schema.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:3c5c2b04fd4b68642d2d3279829541bc56d211fdefc3498e86c1486abee8261b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/bun-runtime
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/bun-runtime/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:b93720b74ea93e870ca87418f490f939b16e4cddace7fb3c97d2fa21398cc985
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/bun-runtime/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a467a198dcc9115b801075ddba6851de5f9529e8dab3ac80e19d7d3b2eca08ec
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/coding-standards
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/coding-standards/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:7295014cdb95589b28e9ac687e0c40a7fd329288e18a0e6fb6c5b1ed58437a0d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/coding-standards/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:647a4e888d750eb11e3c2b54190b68ea9eb7155f4f5dceb128e27221e4202d10
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-platform-analysis
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-platform-analysis/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:c0487e265a1a78a18891c8f95afc68b4f77a7cee56b0e7d5eedbd66cf9c874ff
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-platform-analysis/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6f1ff157fcbd32e8e982771be73f833d77bfb113ca01b2a22908989850ccb742
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-report-structure
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-report-structure/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a983e68bd3eaaaead38aa4cd047b2ac5b2553fe16e873da9fb5573cc8bc5b8bd
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/competitive-report-structure/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:52f3e00a4f0c085f484a6d659f8ab6e159470d78a1a7971d771e90b6bb80d566
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/content-engine
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/content-engine/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1daa87ef009908ac3851230bf366f87d6fde3da90372ff3f21069044a79e100b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/content-engine/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:536c59acaf086405e078d393ae9ce5eb661d2b2d4442669eeae9059eb11eeb64
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/crosspost
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/crosspost/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:fc136701621edcfceb2c3d8c7529120c32d39b4e57142941e0d55b08d252e78b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/crosspost/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:c25468fca15e3b23dcc4069f7f1a7986b9b4955911f4d3ca2c6858416de80cc6
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/deep-research
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/deep-research/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e42c74a515e9c2a2f662f7846402c1ccd8b2bd278cba84450ff0960b07f0f995
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/deep-research/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:365e8b0370f67cf52b793593736da891a809ac49ef06b07f4b8b8a897c32fb3e
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/dmux-workflows
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/dmux-workflows/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:75eef4455c91b14c2dd67196f4be8b50e53bbbc82b6d060d5aa6c0a58e8c4daa
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/dmux-workflows/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:169e5435508e6f802c9aee09008077bae8e991cfcd77ea788379e2a87e03360d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/documentation-lookup
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/documentation-lookup/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e171317c95add368192bfe127eff5873dacc55c7669db4e12b0bf03277ea9e67
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/documentation-lookup/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:84b64c4a05c6b142a522def6aad665ef1ac21c23c74785c6eac2f4a933e14e8b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/e2e-testing
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/e2e-testing/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:8cfa22c35e5370c1f85400921d27e259cc99ba67a890625412bf2fc650a1d038
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/e2e-testing/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:980dd8a3447f207ef9ddc047ef74f2978499ec66ea607213a3e4982f1494c268
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/eval-harness
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/eval-harness/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:49a5a10975860bb2d7e3c4e260ff19b6580e43f5fbc7770b32dece02dde48e49
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/eval-harness/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d62e64db25157bd18cc15239f4aa2747076aee1a35aac324e2bb47a80b2fd292
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/everything-claude-code
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/everything-claude-code/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5364a6f8622f9a770dd84827c9c01afb7c21ddd55b6adf48b863e38b30e1dbb1
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/everything-claude-code/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e8709bda2e653eb50b8fa00451fd184686db683057d7c1a1a62d1e00c31b6efd
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/exa-search
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/exa-search/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:7d9004b9a874a9bdbb6025fd7cdd0b416b9e25b7ecfc8fca7bc7852392a7fb05
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/exa-search/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6c89c21e418c8039b6ded24b72c55dce9bd11a2a579c06cd7fb5cab414984d29
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fal-ai-media
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fal-ai-media/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:fa1016998c7e73b14f584dab9ebcaaff9a5b2197854814375c73b58a6048f48e
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fal-ai-media/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:408751bd2a393995c0eb61e9abbe499d2a157369a34eb4d57939446a82bde56f
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-patterns
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-patterns/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:722866e1106ca51a6eb7f6dd163554d5fa3a30fe9beb5fdbc075ab3a84ae883b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-patterns/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d4aed493c056590554115adb6c6bd2675bcde8dda2bfc7e6437ec7837fb6ef16
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-slides
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-slides/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:3d05c5e983e9d046ccc9336237dde02918e74fb0cf1787dbfeddac3d802f5071
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-slides/STYLE_PRESETS.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f3448493022f8fa3f858319b14c0c48a35d441864dc78a2411f7938c28e7a265
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/frontend-slides/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1ad26b5eaab526dc6f51554cb1aab34ffcdbc0db5a91d8ed9618846f9cce4206
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-materials
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-materials/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:11797289d40f893053fee569b9a5922222d35f931e7bc38ba9268845a29cc164
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-materials/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0544a808ab35040b63a3679973b40a2a5760dab8dc4c0418429aa492b754a54a
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-outreach
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-outreach/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:592568dae2182091e66505ad2eab2a1316ab17b461aa483723ebbb12e3d5f254
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/investor-outreach/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:fc8a54221ccdbd5a6b16704b144d611c37eeec2205056db78c3e00fe77ea2d1f
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/market-research
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/market-research/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:bcccf6d1976ca9cebb08b5b80e53b76fc01d13698ad4cac544955d9dbe5bee03
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/market-research/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:27ec6c3bc8101a39a8acbf88025446f8287b1315281273b73e90910567969ab7
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mcp-server-patterns
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mcp-server-patterns/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a740cb21444aec71800aafb94beedc4045c0ad33f20dee1f5f3acd567a300a8d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mcp-server-patterns/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:ffde209a180b2c00ef3c356f3f4d7b8b187ce1f040da5176d23151d48abda599
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mle-workflow
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mle-workflow/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:9366d2b47d58e6bd1b9426d40a36c88efd1ba93919623b5002185cc80be87ecb
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/mle-workflow/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:bc0871115ac3525faa7382f67bfacd1aabad74f9ebe8394da102f2dacbfd758e
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/nextjs-turbopack
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/nextjs-turbopack/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:2beabec4326fc32e652db21378bae5f704c931a6ff50d0496b9c9f1c8340f82d
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/nextjs-turbopack/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:05cf64df6a26ba90aafe7243bd7570326e51aef92fd87ad7954fc2ecd1d459ed
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/plan-canvas
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/plan-canvas/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:45b208f8551ccc3736f9030ca0f18ede7df6a8e9c6e49e3c8848a705700a9f8b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/plan-canvas/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:5af7468d3fac36a5053b0ace2937255379c4eefd3ba36a4761ad232a0a5c54fc
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/product-capability
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/product-capability/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1e2386179de6f5f53703076170fd98b07eb23e5e998950be34ec53769895e085
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/product-capability/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:309df4ea5eae19e835d18cf91d169fb9a9395a760718c19a3e18ecca94399f12
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/security-review
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/security-review/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:81d7a4cbf8509963539cbe2e3d3ecbde33077d9fa63bc7c8f6d09e7eb7531743
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/security-review/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:40a07bb9a3933a13d4403e59d72426d5cc25ddd67a91f6fabee6f03c0721266b
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/strategic-compact
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/strategic-compact/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:bf1429dbc4ece055ba2ff79b9dc3e926cfa1a39101a88ee8467de062d1a0e7f3
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/strategic-compact/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a91a8a63ad957b1d2429881a8d26d074b450179cc4ad1a5661797f06d0913a1c
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tdd-workflow
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tdd-workflow/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e9507695657b05f26dd62127f1d6ff58e4015d624df65dd4d7e07f6470317393
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/tdd-workflow/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:d68700053a6f3a4a65ec18e34bcef58e75986b5f8ae19f6e20e7412ccbd895a4
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/unified-memory
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/unified-memory/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:a605fe83aef50b4005e6dc853ce90fec22f80df769cfe02189d2d924396b80f3
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/unified-memory/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:0966ba9fc7059cf7b5e890e414f7df6b750e967687e9d4f7e4ae1fef0733e370
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/verification-loop
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/verification-loop/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6d4a399d856207297168cc03f3f8c90d4085ff14566bb928af3c97d9a31f2650
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/verification-loop/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:6ec7745a73b6370a72dd96cdab7bdc71f3a383416d87ddfa943e91226d7c0559
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/video-editing
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/video-editing/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:765558c820d0b6f8e4424b55ca1cf13bf9163a1ec572851d1db229693dc8e2ad
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/video-editing/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:17b0a22b732b1174177af53592a8ebaaeaddd97537df4b038f81fba0f6e95354
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/x-api
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/x-api/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:e36c246b1bb5d78d6201fcbc501c7b698db83d32e09c25ce2400e45422392c96
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/x-api/agents/openai.yaml
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:1418a6ff8cd646d59ac4b74cbb0c98b6dcfb91c74fa716f7b609a5fc2b0b55e4
+local_deployed_files:
+- .agents/skills/agent-introspection-debugging
+- .agents/skills/agent-introspection-debugging/SKILL.md
+- .agents/skills/agent-introspection-debugging/agents/openai.yaml
+- .agents/skills/agent-sort
+- .agents/skills/agent-sort/SKILL.md
+- .agents/skills/agent-sort/agents/openai.yaml
+- .agents/skills/api-design
+- .agents/skills/api-design/SKILL.md
+- .agents/skills/api-design/agents/openai.yaml
+- .agents/skills/article-writing
+- .agents/skills/article-writing/SKILL.md
+- .agents/skills/article-writing/agents/openai.yaml
+- .agents/skills/backend-patterns
+- .agents/skills/backend-patterns/SKILL.md
+- .agents/skills/backend-patterns/agents/openai.yaml
+- .agents/skills/benchmark-methodology
+- .agents/skills/benchmark-methodology/SKILL.md
+- .agents/skills/benchmark-methodology/agents/openai.yaml
+- .agents/skills/brand-discovery
+- .agents/skills/brand-discovery/SKILL.md
+- .agents/skills/brand-discovery/agents/openai.yaml
+- .agents/skills/brand-discovery/references/10_purpose-why.md
+- .agents/skills/brand-discovery/references/20_positioning.md
+- .agents/skills/brand-discovery/references/30_audience-niche.md
+- .agents/skills/brand-discovery/references/40_personality-archetype.md
+- .agents/skills/brand-discovery/references/50_voice-tone.md
+- .agents/skills/brand-discovery/references/60_narrative-story.md
+- .agents/skills/brand-discovery/references/70_founder-tension.md
+- .agents/skills/brand-discovery/references/90_SYNTHESIS.md
+- .agents/skills/brand-voice
+- .agents/skills/brand-voice/SKILL.md
+- .agents/skills/brand-voice/agents/openai.yaml
+- .agents/skills/brand-voice/references/voice-profile-schema.md
+- .agents/skills/bun-runtime
+- .agents/skills/bun-runtime/SKILL.md
+- .agents/skills/bun-runtime/agents/openai.yaml
+- .agents/skills/coding-standards
+- .agents/skills/coding-standards/SKILL.md
+- .agents/skills/coding-standards/agents/openai.yaml
+- .agents/skills/competitive-platform-analysis
+- .agents/skills/competitive-platform-analysis/SKILL.md
+- .agents/skills/competitive-platform-analysis/agents/openai.yaml
+- .agents/skills/competitive-report-structure
+- .agents/skills/competitive-report-structure/SKILL.md
+- .agents/skills/competitive-report-structure/agents/openai.yaml
+- .agents/skills/content-engine
+- .agents/skills/content-engine/SKILL.md
+- .agents/skills/content-engine/agents/openai.yaml
+- .agents/skills/crosspost
+- .agents/skills/crosspost/SKILL.md
+- .agents/skills/crosspost/agents/openai.yaml
+- .agents/skills/deep-research
+- .agents/skills/deep-research/SKILL.md
+- .agents/skills/deep-research/agents/openai.yaml
+- .agents/skills/dmux-workflows
+- .agents/skills/dmux-workflows/SKILL.md
+- .agents/skills/dmux-workflows/agents/openai.yaml
+- .agents/skills/documentation-lookup
+- .agents/skills/documentation-lookup/SKILL.md
+- .agents/skills/documentation-lookup/agents/openai.yaml
+- .agents/skills/e2e-testing
+- .agents/skills/e2e-testing/SKILL.md
+- .agents/skills/e2e-testing/agents/openai.yaml
+- .agents/skills/eval-harness
+- .agents/skills/eval-harness/SKILL.md
+- .agents/skills/eval-harness/agents/openai.yaml
+- .agents/skills/everything-claude-code
+- .agents/skills/everything-claude-code/SKILL.md
+- .agents/skills/everything-claude-code/agents/openai.yaml
+- .agents/skills/exa-search
+- .agents/skills/exa-search/SKILL.md
+- .agents/skills/exa-search/agents/openai.yaml
+- .agents/skills/fal-ai-media
+- .agents/skills/fal-ai-media/SKILL.md
+- .agents/skills/fal-ai-media/agents/openai.yaml
+- .agents/skills/frontend-patterns
+- .agents/skills/frontend-patterns/SKILL.md
+- .agents/skills/frontend-patterns/agents/openai.yaml
+- .agents/skills/frontend-slides
+- .agents/skills/frontend-slides/SKILL.md
+- .agents/skills/frontend-slides/STYLE_PRESETS.md
+- .agents/skills/frontend-slides/agents/openai.yaml
+- .agents/skills/investor-materials
+- .agents/skills/investor-materials/SKILL.md
+- .agents/skills/investor-materials/agents/openai.yaml
+- .agents/skills/investor-outreach
+- .agents/skills/investor-outreach/SKILL.md
+- .agents/skills/investor-outreach/agents/openai.yaml
+- .agents/skills/market-research
+- .agents/skills/market-research/SKILL.md
+- .agents/skills/market-research/agents/openai.yaml
+- .agents/skills/mcp-server-patterns
+- .agents/skills/mcp-server-patterns/SKILL.md
+- .agents/skills/mcp-server-patterns/agents/openai.yaml
+- .agents/skills/mle-workflow
+- .agents/skills/mle-workflow/SKILL.md
+- .agents/skills/mle-workflow/agents/openai.yaml
+- .agents/skills/nextjs-turbopack
+- .agents/skills/nextjs-turbopack/SKILL.md
+- .agents/skills/nextjs-turbopack/agents/openai.yaml
+- .agents/skills/plan-canvas
+- .agents/skills/plan-canvas/SKILL.md
+- .agents/skills/plan-canvas/agents/openai.yaml
+- .agents/skills/product-capability
+- .agents/skills/product-capability/SKILL.md
+- .agents/skills/product-capability/agents/openai.yaml
+- .agents/skills/security-review
+- .agents/skills/security-review/SKILL.md
+- .agents/skills/security-review/agents/openai.yaml
+- .agents/skills/strategic-compact
+- .agents/skills/strategic-compact/SKILL.md
+- .agents/skills/strategic-compact/agents/openai.yaml
+- .agents/skills/tdd-workflow
+- .agents/skills/tdd-workflow/SKILL.md
+- .agents/skills/tdd-workflow/agents/openai.yaml
+- .agents/skills/unified-memory
+- .agents/skills/unified-memory/SKILL.md
+- .agents/skills/unified-memory/agents/openai.yaml
+- .agents/skills/verification-loop
+- .agents/skills/verification-loop/SKILL.md
+- .agents/skills/verification-loop/agents/openai.yaml
+- .agents/skills/video-editing
+- .agents/skills/video-editing/SKILL.md
+- .agents/skills/video-editing/agents/openai.yaml
+- .agents/skills/x-api
+- .agents/skills/x-api/SKILL.md
+- .agents/skills/x-api/agents/openai.yaml
+local_deployed_file_hashes:
+  .agents/skills/agent-introspection-debugging/SKILL.md: sha256:5357d123cf8cee6dc2e901542a28a19d7ee9e939e34528d27987897318bcfbf6
+  .agents/skills/agent-introspection-debugging/agents/openai.yaml: sha256:80b2eefc3f4f003335804ce3146383464eac16a393d937cc91f7b3a8f7fbc069
+  .agents/skills/agent-sort/SKILL.md: sha256:82325c9fb7a58d7eaeafc4eecaef4a1d9d6c14e2f4d52c61265dd9c78828ebc3
+  .agents/skills/agent-sort/agents/openai.yaml: sha256:75cca9c8642a113b92eb62bd744362a3f7e6d6a4220d61904ddb784e0e1393d8
+  .agents/skills/api-design/SKILL.md: sha256:5568a8b1e2e9ea1cc1433535ba8fcf9c21309b996108887343150d4fc76992e6
+  .agents/skills/api-design/agents/openai.yaml: sha256:46c8bc7b5ccea34cc3ba4f90e36c36c0ad6e8109084ee77911a54bf3d6da1ac5
+  .agents/skills/article-writing/SKILL.md: sha256:6305169f1aaf57e293284aa21bf646d995079ae2921499f7800c7db42d57091f
+  .agents/skills/article-writing/agents/openai.yaml: sha256:61cfe684a8f6018f9f12fd2ab4f29fc27f749dbe53124d55bfcec5fce60cba79
+  .agents/skills/backend-patterns/SKILL.md: sha256:d4d3c9c54b5bf5af3c1711fe16ef28db1538d4c272cfa0e4420da60c368fef02
+  .agents/skills/backend-patterns/agents/openai.yaml: sha256:f9ee88273743b1bc1d0a69c19d2544cc8f579688fc4b4518d68925e3f4a88c7a
+  .agents/skills/benchmark-methodology/SKILL.md: sha256:f2cba14bb87ff43f80c2eaec6311eee7ead4d8b89949864442362eb368acbbac
+  .agents/skills/benchmark-methodology/agents/openai.yaml: sha256:fe04dd9cfefcc14fd2d8330b7b131df9643cda25729a04982e9aeba0d3201b3a
+  .agents/skills/brand-discovery/SKILL.md: sha256:83c94b91d54d8bf1dcebccefce0d86f0dacf19372c65d2b25a03a9d102d1e86d
+  .agents/skills/brand-discovery/agents/openai.yaml: sha256:d1fbd005b15056f1b6ba5b3a2dc9ecaf29dbb974c54af3882c0d49f9e9c600b1
+  .agents/skills/brand-discovery/references/10_purpose-why.md: sha256:d70beb1dcf73512e235a377c59ca43f544de084dd555701f99a65574b17939ea
+  .agents/skills/brand-discovery/references/20_positioning.md: sha256:50e2c71b8b4d6a44d59b45609c06aa258f6c16871a4d2a184f68983433e954c4
+  .agents/skills/brand-discovery/references/30_audience-niche.md: sha256:189e8d41d08df421fa5bad5d15e814334dc8fe706255701b277e258100b6007d
+  .agents/skills/brand-discovery/references/40_personality-archetype.md: sha256:58b04b09cf1e206d1240fc01d8c77c22fcc9b9c0d8ef326ad418476589072182
+  .agents/skills/brand-discovery/references/50_voice-tone.md: sha256:cf69dc9573ed00561cfb8e7e489450ae644b90703a2d9315b77d8629af69bde3
+  .agents/skills/brand-discovery/references/60_narrative-story.md: sha256:46a6184f00ffa8d6900d59d58164f5e767012bc12dd67dc2b2ba53976d6811b9
+  .agents/skills/brand-discovery/references/70_founder-tension.md: sha256:88e7149f2ace5d3f726d33e5fb7ca2caddb7e3301574e849517e16277590ab39
+  .agents/skills/brand-discovery/references/90_SYNTHESIS.md: sha256:04d0215bb054685ab8f6956f8369a7eb9d39e16acd1f7ae5ffe46725f2c00c61
+  .agents/skills/brand-voice/SKILL.md: sha256:63bb7231f1ec358dcd6b4d9c8bceb212d3c2475be2dd2b8336e3c265bc6d5c03
+  .agents/skills/brand-voice/agents/openai.yaml: sha256:1ece788cc1f61f7f9e877556b9ad89c35dc6898cbcf30ce5eb3f210f3d431cb1
+  .agents/skills/brand-voice/references/voice-profile-schema.md: sha256:3c5c2b04fd4b68642d2d3279829541bc56d211fdefc3498e86c1486abee8261b
+  .agents/skills/bun-runtime/SKILL.md: sha256:b93720b74ea93e870ca87418f490f939b16e4cddace7fb3c97d2fa21398cc985
+  .agents/skills/bun-runtime/agents/openai.yaml: sha256:a467a198dcc9115b801075ddba6851de5f9529e8dab3ac80e19d7d3b2eca08ec
+  .agents/skills/coding-standards/SKILL.md: sha256:7295014cdb95589b28e9ac687e0c40a7fd329288e18a0e6fb6c5b1ed58437a0d
+  .agents/skills/coding-standards/agents/openai.yaml: sha256:647a4e888d750eb11e3c2b54190b68ea9eb7155f4f5dceb128e27221e4202d10
+  .agents/skills/competitive-platform-analysis/SKILL.md: sha256:c0487e265a1a78a18891c8f95afc68b4f77a7cee56b0e7d5eedbd66cf9c874ff
+  .agents/skills/competitive-platform-analysis/agents/openai.yaml: sha256:6f1ff157fcbd32e8e982771be73f833d77bfb113ca01b2a22908989850ccb742
+  .agents/skills/competitive-report-structure/SKILL.md: sha256:a983e68bd3eaaaead38aa4cd047b2ac5b2553fe16e873da9fb5573cc8bc5b8bd
+  .agents/skills/competitive-report-structure/agents/openai.yaml: sha256:52f3e00a4f0c085f484a6d659f8ab6e159470d78a1a7971d771e90b6bb80d566
+  .agents/skills/content-engine/SKILL.md: sha256:1daa87ef009908ac3851230bf366f87d6fde3da90372ff3f21069044a79e100b
+  .agents/skills/content-engine/agents/openai.yaml: sha256:536c59acaf086405e078d393ae9ce5eb661d2b2d4442669eeae9059eb11eeb64
+  .agents/skills/crosspost/SKILL.md: sha256:fc136701621edcfceb2c3d8c7529120c32d39b4e57142941e0d55b08d252e78b
+  .agents/skills/crosspost/agents/openai.yaml: sha256:c25468fca15e3b23dcc4069f7f1a7986b9b4955911f4d3ca2c6858416de80cc6
+  .agents/skills/deep-research/SKILL.md: sha256:e42c74a515e9c2a2f662f7846402c1ccd8b2bd278cba84450ff0960b07f0f995
+  .agents/skills/deep-research/agents/openai.yaml: sha256:365e8b0370f67cf52b793593736da891a809ac49ef06b07f4b8b8a897c32fb3e
+  .agents/skills/dmux-workflows/SKILL.md: sha256:75eef4455c91b14c2dd67196f4be8b50e53bbbc82b6d060d5aa6c0a58e8c4daa
+  .agents/skills/dmux-workflows/agents/openai.yaml: sha256:169e5435508e6f802c9aee09008077bae8e991cfcd77ea788379e2a87e03360d
+  .agents/skills/documentation-lookup/SKILL.md: sha256:e171317c95add368192bfe127eff5873dacc55c7669db4e12b0bf03277ea9e67
+  .agents/skills/documentation-lookup/agents/openai.yaml: sha256:84b64c4a05c6b142a522def6aad665ef1ac21c23c74785c6eac2f4a933e14e8b
+  .agents/skills/e2e-testing/SKILL.md: sha256:8cfa22c35e5370c1f85400921d27e259cc99ba67a890625412bf2fc650a1d038
+  .agents/skills/e2e-testing/agents/openai.yaml: sha256:980dd8a3447f207ef9ddc047ef74f2978499ec66ea607213a3e4982f1494c268
+  .agents/skills/eval-harness/SKILL.md: sha256:49a5a10975860bb2d7e3c4e260ff19b6580e43f5fbc7770b32dece02dde48e49
+  .agents/skills/eval-harness/agents/openai.yaml: sha256:d62e64db25157bd18cc15239f4aa2747076aee1a35aac324e2bb47a80b2fd292
+  .agents/skills/everything-claude-code/SKILL.md: sha256:5364a6f8622f9a770dd84827c9c01afb7c21ddd55b6adf48b863e38b30e1dbb1
+  .agents/skills/everything-claude-code/agents/openai.yaml: sha256:e8709bda2e653eb50b8fa00451fd184686db683057d7c1a1a62d1e00c31b6efd
+  .agents/skills/exa-search/SKILL.md: sha256:7d9004b9a874a9bdbb6025fd7cdd0b416b9e25b7ecfc8fca7bc7852392a7fb05
+  .agents/skills/exa-search/agents/openai.yaml: sha256:6c89c21e418c8039b6ded24b72c55dce9bd11a2a579c06cd7fb5cab414984d29
+  .agents/skills/fal-ai-media/SKILL.md: sha256:fa1016998c7e73b14f584dab9ebcaaff9a5b2197854814375c73b58a6048f48e
+  .agents/skills/fal-ai-media/agents/openai.yaml: sha256:408751bd2a393995c0eb61e9abbe499d2a157369a34eb4d57939446a82bde56f
+  .agents/skills/frontend-patterns/SKILL.md: sha256:722866e1106ca51a6eb7f6dd163554d5fa3a30fe9beb5fdbc075ab3a84ae883b
+  .agents/skills/frontend-patterns/agents/openai.yaml: sha256:d4aed493c056590554115adb6c6bd2675bcde8dda2bfc7e6437ec7837fb6ef16
+  .agents/skills/frontend-slides/SKILL.md: sha256:3d05c5e983e9d046ccc9336237dde02918e74fb0cf1787dbfeddac3d802f5071
+  .agents/skills/frontend-slides/STYLE_PRESETS.md: sha256:f3448493022f8fa3f858319b14c0c48a35d441864dc78a2411f7938c28e7a265
+  .agents/skills/frontend-slides/agents/openai.yaml: sha256:1ad26b5eaab526dc6f51554cb1aab34ffcdbc0db5a91d8ed9618846f9cce4206
+  .agents/skills/investor-materials/SKILL.md: sha256:11797289d40f893053fee569b9a5922222d35f931e7bc38ba9268845a29cc164
+  .agents/skills/investor-materials/agents/openai.yaml: sha256:0544a808ab35040b63a3679973b40a2a5760dab8dc4c0418429aa492b754a54a
+  .agents/skills/investor-outreach/SKILL.md: sha256:592568dae2182091e66505ad2eab2a1316ab17b461aa483723ebbb12e3d5f254
+  .agents/skills/investor-outreach/agents/openai.yaml: sha256:fc8a54221ccdbd5a6b16704b144d611c37eeec2205056db78c3e00fe77ea2d1f
+  .agents/skills/market-research/SKILL.md: sha256:bcccf6d1976ca9cebb08b5b80e53b76fc01d13698ad4cac544955d9dbe5bee03
+  .agents/skills/market-research/agents/openai.yaml: sha256:27ec6c3bc8101a39a8acbf88025446f8287b1315281273b73e90910567969ab7
+  .agents/skills/mcp-server-patterns/SKILL.md: sha256:a740cb21444aec71800aafb94beedc4045c0ad33f20dee1f5f3acd567a300a8d
+  .agents/skills/mcp-server-patterns/agents/openai.yaml: sha256:ffde209a180b2c00ef3c356f3f4d7b8b187ce1f040da5176d23151d48abda599
+  .agents/skills/mle-workflow/SKILL.md: sha256:9366d2b47d58e6bd1b9426d40a36c88efd1ba93919623b5002185cc80be87ecb
+  .agents/skills/mle-workflow/agents/openai.yaml: sha256:bc0871115ac3525faa7382f67bfacd1aabad74f9ebe8394da102f2dacbfd758e
+  .agents/skills/nextjs-turbopack/SKILL.md: sha256:2beabec4326fc32e652db21378bae5f704c931a6ff50d0496b9c9f1c8340f82d
+  .agents/skills/nextjs-turbopack/agents/openai.yaml: sha256:05cf64df6a26ba90aafe7243bd7570326e51aef92fd87ad7954fc2ecd1d459ed
+  .agents/skills/plan-canvas/SKILL.md: sha256:45b208f8551ccc3736f9030ca0f18ede7df6a8e9c6e49e3c8848a705700a9f8b
+  .agents/skills/plan-canvas/agents/openai.yaml: sha256:5af7468d3fac36a5053b0ace2937255379c4eefd3ba36a4761ad232a0a5c54fc
+  .agents/skills/product-capability/SKILL.md: sha256:1e2386179de6f5f53703076170fd98b07eb23e5e998950be34ec53769895e085
+  .agents/skills/product-capability/agents/openai.yaml: sha256:309df4ea5eae19e835d18cf91d169fb9a9395a760718c19a3e18ecca94399f12
+  .agents/skills/security-review/SKILL.md: sha256:81d7a4cbf8509963539cbe2e3d3ecbde33077d9fa63bc7c8f6d09e7eb7531743
+  .agents/skills/security-review/agents/openai.yaml: sha256:40a07bb9a3933a13d4403e59d72426d5cc25ddd67a91f6fabee6f03c0721266b
+  .agents/skills/strategic-compact/SKILL.md: sha256:bf1429dbc4ece055ba2ff79b9dc3e926cfa1a39101a88ee8467de062d1a0e7f3
+  .agents/skills/strategic-compact/agents/openai.yaml: sha256:a91a8a63ad957b1d2429881a8d26d074b450179cc4ad1a5661797f06d0913a1c
+  .agents/skills/tdd-workflow/SKILL.md: sha256:e9507695657b05f26dd62127f1d6ff58e4015d624df65dd4d7e07f6470317393
+  .agents/skills/tdd-workflow/agents/openai.yaml: sha256:d68700053a6f3a4a65ec18e34bcef58e75986b5f8ae19f6e20e7412ccbd895a4
+  .agents/skills/unified-memory/SKILL.md: sha256:a605fe83aef50b4005e6dc853ce90fec22f80df769cfe02189d2d924396b80f3
+  .agents/skills/unified-memory/agents/openai.yaml: sha256:0966ba9fc7059cf7b5e890e414f7df6b750e967687e9d4f7e4ae1fef0733e370
+  .agents/skills/verification-loop/SKILL.md: sha256:6d4a399d856207297168cc03f3f8c90d4085ff14566bb928af3c97d9a31f2650
+  .agents/skills/verification-loop/agents/openai.yaml: sha256:6ec7745a73b6370a72dd96cdab7bdc71f3a383416d87ddfa943e91226d7c0559
+  .agents/skills/video-editing/SKILL.md: sha256:765558c820d0b6f8e4424b55ca1cf13bf9163a1ec572851d1db229693dc8e2ad
+  .agents/skills/video-editing/agents/openai.yaml: sha256:17b0a22b732b1174177af53592a8ebaaeaddd97537df4b038f81fba0f6e95354
+  .agents/skills/x-api/SKILL.md: sha256:e36c246b1bb5d78d6201fcbc501c7b698db83d32e09c25ce2400e45422392c96
+  .agents/skills/x-api/agents/openai.yaml: sha256:1418a6ff8cd646d59ac4b74cbb0c98b6dcfb91c74fa716f7b609a5fc2b0b55e4

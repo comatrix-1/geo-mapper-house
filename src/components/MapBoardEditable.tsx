@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { Marker, Circle, Polyline, Polygon } from "react-leaflet";
 import type { LatLngLiteral } from "leaflet";
 import type {
@@ -9,19 +9,12 @@ import type {
   MapPolyline,
   LayerStyle,
 } from "../types";
-import {
-  calculatePathLength,
-  calculatePolygonArea,
-  formatDistance,
-  formatArea,
-  getCentroid,
-} from "../utils/geoUtils";
+import { getCentroid } from "../utils/geoUtils";
 import {
   createMarkerIcon,
   createMoveHandleIcon,
   createVertexIcon,
 } from "./Icons";
-import { ObjectPopup, RadiusInput } from "./MapBoardPopups";
 
 // Limit vertices for showing edit handles to prevent crash on large imports (e.g. detailed country borders)
 const VERTEX_LIMIT = 100;
@@ -34,8 +27,6 @@ export interface EditableObjectProps {
   interactive: boolean;
   setSelectedObjectId: (id: string | null) => void;
   onUpdate: (id: string, updates: Partial<MapObject>) => void;
-  updateObjectMeta: (id: string, title: string, desc: string) => void;
-  onDelete: (id: string) => void;
 }
 
 type DragEvent = { target: { getLatLng: () => LatLngLiteral } };
@@ -68,6 +59,7 @@ const dragVertexEnd = (
 /** Shared shape-move logic: offset every vertex by the handle's delta. */
 const dragShapeOn = (
   ref: { current: unknown },
+  vertexRefs: { current: (L.Marker | null)[] },
   positions: LatLngLiteral[],
   center: LatLngLiteral,
   e: DragEvent
@@ -81,6 +73,12 @@ const dragShapeOn = (
   }));
   const path = ref.current as { setLatLngs: (l: LatLngLiteral[]) => void } | null;
   if (path) path.setLatLngs(newPositions);
+  // Keep the vertex handles glued to the shape while it moves; the committed
+  // positions only flow back through props on drag end.
+  vertexRefs.current.forEach((marker, i) => {
+    const pos = newPositions[i];
+    if (marker && pos) marker.setLatLng(pos);
+  });
 };
 
 /** Shared shape-move-end logic: commit the translated positions. */
@@ -100,6 +98,8 @@ const dragShapeEnd = (
 
 interface VertexHandlesProps {
   positions: LatLngLiteral[];
+  /** Live refs to the vertex markers so a shape move can drag them along. */
+  vertexRefs: { current: (L.Marker | null)[] };
   onVertexDrag: (idx: number, e: DragEvent) => void;
   onVertexDragEnd: (idx: number, e: DragEvent) => void;
   center: LatLngLiteral;
@@ -110,6 +110,7 @@ interface VertexHandlesProps {
 /** Vertex + move-handle markers shared by polyline and polygon editors. */
 const ShapeHandles = ({
   positions,
+  vertexRefs,
   onVertexDrag,
   onVertexDragEnd,
   center,
@@ -120,9 +121,13 @@ const ShapeHandles = ({
     {positions.map((pos, idx) => (
       <Marker
         key={`v-${pos.lat}-${pos.lng}-${idx}`}
+        ref={(m) => {
+          vertexRefs.current[idx] = m;
+        }}
         position={pos}
         icon={createVertexIcon()}
         draggable={true}
+        bubblingMouseEvents={false}
         eventHandlers={{
           drag: (e) => onVertexDrag(idx, e),
           dragend: (e) => onVertexDragEnd(idx, e),
@@ -133,6 +138,7 @@ const ShapeHandles = ({
       position={center}
       icon={createMoveHandleIcon()}
       draggable={true}
+      bubblingMouseEvents={false}
       eventHandlers={{
         drag: onCenterDrag,
         dragend: onCenterDragEnd,
@@ -148,8 +154,6 @@ export const EditablePoint = ({
   interactive,
   setSelectedObjectId,
   onUpdate,
-  updateObjectMeta,
-  onDelete,
 }: EditableObjectProps) => {
   const point = obj as MapPoint;
   return (
@@ -159,30 +163,17 @@ export const EditablePoint = ({
       icon={createMarkerIcon(style.borderColor)}
       draggable={isSelected}
       interactive={interactive}
+      // Don't let object clicks bubble to the map: the map click handler
+      // clears the selection, which would immediately undo the selection
+      // this click just set.
+      bubblingMouseEvents={false}
       eventHandlers={{
         click: () => {
           if (interactive) setSelectedObjectId(point.id);
         },
         dragend: (e) => onUpdate(point.id, { position: e.target.getLatLng() }),
       }}
-    >
-      <ObjectPopup
-        obj={point}
-        updateObjectMeta={updateObjectMeta}
-        onDelete={onDelete}
-        renderExtraView={() => (
-          <div className="text-xs text-gray-500 font-mono bg-gray-50 p-2 rounded border border-gray-100">
-            <div>Lat: {point.position.lat.toFixed(6)}</div>
-            <div>Lng: {point.position.lng.toFixed(6)}</div>
-          </div>
-        )}
-        renderExtraEdit={() => (
-          <div className="text-xs text-gray-400 italic">
-            Coordinates can be changed by dragging the pin.
-          </div>
-        )}
-      />
-    </Marker>
+    />
   );
 };
 
@@ -193,8 +184,6 @@ export const EditableCircle = ({
   interactive,
   setSelectedObjectId,
   onUpdate,
-  updateObjectMeta,
-  onDelete,
 }: EditableObjectProps) => {
   const circle = obj as MapCircle;
   const circleRef = useRef<L.Circle>(null);
@@ -210,8 +199,6 @@ export const EditableCircle = ({
     onUpdate(circle.id, { center: e.target.getLatLng() });
   };
 
-  const area = Math.PI * Math.pow(circle.radius, 2);
-
   return (
     <>
       <Circle
@@ -225,48 +212,18 @@ export const EditableCircle = ({
           fillOpacity: style.fillOpacity,
         }}
         interactive={interactive}
+        bubblingMouseEvents={false}
         eventHandlers={{
           click: () => {
             if (interactive) setSelectedObjectId(circle.id);
           },
         }}
-      >
-        <ObjectPopup
-          obj={circle}
-          updateObjectMeta={updateObjectMeta}
-          onDelete={onDelete}
-          renderExtraView={() => (
-            <div className="flex flex-col gap-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Area:</span>
-                <span className="font-medium text-blue-700">
-                  {formatArea(area)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Radius:</span>
-                <span className="font-medium text-blue-700">
-                  {formatDistance(circle.radius)}
-                </span>
-              </div>
-              <div className="text-xs text-gray-400 font-mono mt-1">
-                Center: {circle.center.lat.toFixed(5)},{" "}
-                {circle.center.lng.toFixed(5)}
-              </div>
-            </div>
-          )}
-          renderExtraEdit={() => (
-            <RadiusInput
-              value={circle.radius}
-              onChange={(r) => onUpdate(circle.id, { radius: r })}
-            />
-          )}
-        />
-      </Circle>
+      />
       {isSelected && (
         <Marker
           position={circle.center}
           draggable={true}
+          bubblingMouseEvents={false}
           icon={createMoveHandleIcon()}
           eventHandlers={{
             drag: onHandleDrag,
@@ -285,13 +242,11 @@ export const EditablePolyline = ({
   interactive,
   setSelectedObjectId,
   onUpdate,
-  updateObjectMeta,
-  onDelete,
 }: EditableObjectProps) => {
   const polyline = obj as MapPolyline;
   const polylineRef = useRef<L.Polyline>(null);
+  const vertexRefs = useRef<(L.Marker | null)[]>([]);
   const center = getCentroid(polyline.positions);
-  const distance = calculatePathLength(polyline.positions);
   const showVertices = polyline.positions.length <= VERTEX_LIMIT;
 
   return (
@@ -306,36 +261,17 @@ export const EditablePolyline = ({
             : style.borderWidth,
         }}
         interactive={interactive}
+        bubblingMouseEvents={false}
         eventHandlers={{
           click: () => {
             if (interactive) setSelectedObjectId(polyline.id);
           },
         }}
-      >
-        <ObjectPopup
-          obj={polyline}
-          updateObjectMeta={updateObjectMeta}
-          onDelete={onDelete}
-          renderExtraView={() => (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Distance:</span>
-              <span className="font-medium text-blue-700">
-                {formatDistance(distance)}
-              </span>
-            </div>
-          )}
-          renderExtraEdit={() => (
-            <div className="text-xs text-gray-400 italic">
-              {showVertices
-                ? "Drag points on map to edit path."
-                : "Shape is too complex to edit individual points."}
-            </div>
-          )}
-        />
-      </Polyline>
+      />
       {isSelected && showVertices && (
         <ShapeHandles
           positions={polyline.positions}
+          vertexRefs={vertexRefs}
           onVertexDrag={(idx, e) =>
             dragVertexOn(polylineRef, polyline.positions, idx, e)
           }
@@ -346,7 +282,7 @@ export const EditablePolyline = ({
           }
           center={center}
           onCenterDrag={(e) =>
-            dragShapeOn(polylineRef, polyline.positions, center, e)
+            dragShapeOn(polylineRef, vertexRefs, polyline.positions, center, e)
           }
           onCenterDragEnd={(e) =>
             onUpdate(polyline.id, {
@@ -366,13 +302,11 @@ export const EditablePolygon = ({
   interactive,
   setSelectedObjectId,
   onUpdate,
-  updateObjectMeta,
-  onDelete,
 }: EditableObjectProps) => {
   const polygon = obj as MapPolygon;
   const polygonRef = useRef<L.Polygon>(null);
+  const vertexRefs = useRef<(L.Marker | null)[]>([]);
   const center = getCentroid(polygon.positions);
-  const area = calculatePolygonArea(polygon.positions);
   const showVertices = polygon.positions.length <= VERTEX_LIMIT;
 
   return (
@@ -387,36 +321,17 @@ export const EditablePolygon = ({
           fillOpacity: style.fillOpacity,
         }}
         interactive={interactive}
+        bubblingMouseEvents={false}
         eventHandlers={{
           click: () => {
             if (interactive) setSelectedObjectId(polygon.id);
           },
         }}
-      >
-        <ObjectPopup
-          obj={polygon}
-          updateObjectMeta={updateObjectMeta}
-          onDelete={onDelete}
-          renderExtraView={() => (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Area:</span>
-              <span className="font-medium text-blue-700">
-                {formatArea(area)}
-              </span>
-            </div>
-          )}
-          renderExtraEdit={() => (
-            <div className="text-xs text-gray-400 italic">
-              {showVertices
-                ? "Drag vertices on map to reshape."
-                : "Shape is too complex to edit individual vertices."}
-            </div>
-          )}
-        />
-      </Polygon>
+      />
       {isSelected && showVertices && (
         <ShapeHandles
           positions={polygon.positions}
+          vertexRefs={vertexRefs}
           onVertexDrag={(idx, e) =>
             dragVertexOn(polygonRef, polygon.positions, idx, e)
           }
@@ -427,7 +342,7 @@ export const EditablePolygon = ({
           }
           center={center}
           onCenterDrag={(e) =>
-            dragShapeOn(polygonRef, polygon.positions, center, e)
+            dragShapeOn(polygonRef, vertexRefs, polygon.positions, center, e)
           }
           onCenterDragEnd={(e) =>
             onUpdate(polygon.id, {

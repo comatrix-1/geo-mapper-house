@@ -36,3 +36,9 @@ CLAUDE.md
 .qoder
 .kiro
 
+
+# APM dependencies
+apm_modules/
+
+# Redundant because of APM
+.agents

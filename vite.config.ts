@@ -1,8 +1,14 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import path from 'node:path'
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   build: {
     target: 'esnext',
     minify: 'esbuild',
@@ -21,8 +27,14 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './test/setupTests.ts',
     css: false,
-    // Skip editor worktree copies (e.g. .kilo/worktrees) that duplicate tests
-    exclude: ['**/node_modules/**', '**/dist/**', '.kilo/**', '**/.kilo/**'],
+    server: {
+      deps: {
+        inline: [/@base-ui/],
+      },
+    },
+    // Skip editor worktree copies (e.g. .kilo/worktrees) and vendored
+    // tooling (apm_modules) that duplicate or break the suite
+    exclude: ['**/node_modules/**', '**/dist/**', '.kilo/**', '**/.kilo/**', 'apm_modules/**'],
   },
   define: {
     'process.env': {}

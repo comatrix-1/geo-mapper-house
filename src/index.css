@@ -21,3 +21,9 @@ html, body, #root {
   filter: none !important;
   -webkit-filter: grayscale(0%) !important;
 }
+
+/* Keep the top-left zoom controls clear of the sidebar's collapse rail,
+   which overlays the outermost ~16px of the map (SidebarRail -right-4). */
+.leaflet-top.leaflet-left {
+  left: 24px;
+}
