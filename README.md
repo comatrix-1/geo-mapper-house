@@ -12,11 +12,13 @@ A feature-rich, layered map application built with React, TypeScript, and Leafle
     *   ⭕ **Circle**: Draw circles with real-time radius measurement.
     *   📏 **Line**: Draw paths and measure distances.
     *   ⬡ **Polygon**: Draw areas and calculate square meters/kilometers.
+    *   🖼️ **Map Image**: Upload an image (≤10 MB, any image type) and place it on the map. Drag the move handle to translate it or drag a corner handle to resize it.
 *   **Measurement**: Dedicated Ruler tool for measuring path distances without creating objects.
 *   **Editing**: Select objects to move them, drag vertices to reshape polygons/lines, and adjust circle radius.
 *   **Import/Export**:
     *   Import **KML/KMZ** files (e.g., from Google Earth).
     *   Save and Load full project state via **JSON**.
+    *   Imported project objects keep their original download URL and ownership metadata. A user who imports another user's project can display the shared image URL but cannot delete the original owner's Storage file.
 *   **Cloud Sync**: Sign in with Google to sync your maps across devices using **Firebase Auth** and **Firestore**.
 
 ## Tech Stack
@@ -65,6 +67,21 @@ To use Authentication and Cloud Storage, you must set up a Firebase Project.
     *   Copy `.env.example` to `.env`, inserting the values from the Firebase config.
 
 > **Note**: If you see a "Domain Not Authorized" error during login, ensure your current browser URL (e.g., `127.0.0.1` or `localhost`) is added to the Authorized Domains list in the Firebase Console.
+
+### Cloud Storage
+
+Map images are stored in Firebase Storage. Uploads are restricted to the signed-in user's own folder, and the rules enforce a 10 MB image-type limit.
+
+1.  In the Firebase Console, open **Storage** and create a bucket (or use the default).
+2.  Deploy the rules from this repository:
+
+    ```bash
+    firebase deploy --only storage
+    ```
+
+    or copy `storage.rules` into the Storage rules editor in the Firebase Console.
+
+3.  The rules only allow writes to `users/{userId}/mapImages/{objectId}/{fileName}` where `request.auth.uid == userId`, `request.resource.contentType` matches `image/.*`, and `request.resource.size <= 10 * 1024 * 1024`. Everything else in Storage is inaccessible from the app.
 
 ## Usage
 

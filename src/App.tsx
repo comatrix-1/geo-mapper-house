@@ -9,6 +9,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { saveProjectToFile, loadProjectFromFile } from './utils/fileImporter';
 import {
   saveObject,
+  deleteObject,
   uploadMapImage,
   deleteMapImage,
 } from './utils/firebase';
@@ -56,11 +57,61 @@ const App: React.FC = () => {
     }
   };
 
-  const handleObjectDelete = (id: string) => {
+  // Storage is only cleaned up for images the current user owns. Imported
+  // objects (a different owner, or no owner/path) keep their download URL and
+  // are removed through Firestore only — never through Storage. Returns true
+  // when the object was removed from local state, false when it was retained.
+  const deleteObjectSafely = async (id: string): Promise<boolean> => {
+    const target = workspace.objects.find((o) => o.id === id);
+    if (!target) return false;
+
+    const isOwnedImage =
+      !!user &&
+      target.type === 'image' &&
+      target.storageOwnerId === user.uid &&
+      !!target.storagePath;
+
+    if (isOwnedImage) {
+      // Storage first: a Storage failure must not remove the only file
+      // reference, so retain the object and surface the error.
+      try {
+        await deleteMapImage(target.storagePath);
+      } catch (err) {
+        console.error('Failed to delete image file:', err);
+        setError('Could not delete image file.');
+        return false;
+      }
+    }
+
+    try {
+      if (user) await deleteObject(user.uid, id);
+    } catch (err) {
+      console.error('Failed to delete object:', err);
+      setError(isOwnedImage ? 'Could not delete image overlay.' : 'Could not delete object.');
+      return false;
+    }
+
     workspace.deleteObject(id);
-    if (session.selectedObjectId === id) {
+    return true;
+  };
+
+  const handleObjectDelete = async (id: string) => {
+    const removed = await deleteObjectSafely(id);
+    if (removed && session.selectedObjectId === id) {
       session.setSelectedObjectId(null);
     }
+  };
+
+  // Layer deletion applies the same Storage-safe ordering to every object in
+  // the layer: no layer or local object is removed if any required cleanup
+  // fails, so a partial delete can never leave the map inconsistent.
+  const handleLayerDelete = async (layerId: string) => {
+    const layerObjects = workspace.objects.filter((o) => o.layerId === layerId);
+    for (const obj of layerObjects) {
+      const removed = await deleteObjectSafely(obj.id);
+      if (!removed) return;
+    }
+    workspace.deleteLayer(layerId);
   };
 
   // Image upload is orchestrated here (not in MapBoard) so the signed-in
@@ -181,7 +232,7 @@ const App: React.FC = () => {
         setActiveLayerId={workspace.setActiveLayerId}
         toggleLayerVisibility={workspace.toggleLayerVisibility}
         addLayer={workspace.addLayer}
-        deleteLayer={workspace.deleteLayer}
+        deleteLayer={handleLayerDelete}
         updateLayer={workspace.updateLayer}
         reorderLayer={workspace.reorderLayer}
         onObjectLayerChange={workspace.moveObjectToLayerAt}
