@@ -1,15 +1,17 @@
-import React from 'react';
-import { MousePointer2, MapPin, Circle, PenTool, Hexagon, Ruler } from 'lucide-react';
+import React, { useRef } from 'react';
+import { MousePointer2, MapPin, Circle, PenTool, Hexagon, Ruler, Image } from 'lucide-react';
 import type { DrawingMode } from '../types';
 
 interface ToolbarProps {
   activeMode: DrawingMode;
   setMode: (mode: DrawingMode) => void;
+  onImageFileSelected: (file: File) => void;
   /** False while no layer exists to receive drawn objects. */
   canDraw?: boolean;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ activeMode, setMode, canDraw = true }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ activeMode, setMode, onImageFileSelected, canDraw = true }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const tools: { mode: DrawingMode; icon: React.ReactNode; label: string }[] = [
     { mode: 'none', icon: <MousePointer2 size={20} />, label: 'Select' },
     { mode: 'point', icon: <MapPin size={20} />, label: 'Point' },
@@ -48,6 +50,31 @@ const Toolbar: React.FC<ToolbarProps> = ({ activeMode, setMode, canDraw = true }
         </button>
         );
       })}
+      {/* Image overlay action */}
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        className="p-2 rounded-full transition-all duration-200 flex items-center justify-center tooltip-trigger group relative text-gray-600 hover:bg-gray-100"
+        aria-label="Image"
+      >
+        <Image size={20} />
+        <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Image
+        </span>
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        aria-label="Choose image file"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            onImageFileSelected(file);
+          }
+          e.target.value = '';
+        }}
+      />
     </div>
   );
 };

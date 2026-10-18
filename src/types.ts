@@ -5,9 +5,14 @@ export type DrawingMode = 'none' | 'point' | 'circle' | 'polyline' | 'polygon' |
 export interface BaseMapObject {
   id: string;
   layerId: string;
-  type: 'point' | 'circle' | 'polyline' | 'polygon';
+  type: 'point' | 'circle' | 'polyline' | 'polygon' | 'image';
   title: string;
   description: string;
+}
+
+export interface MapImageBounds {
+  southWest: LatLngLiteral;
+  northEast: LatLngLiteral;
 }
 
 export interface MapPoint extends BaseMapObject {
@@ -31,7 +36,17 @@ export interface MapPolygon extends BaseMapObject {
   positions: LatLngLiteral[];
 }
 
-export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon;
+export interface MapImage extends BaseMapObject {
+  type: 'image';
+  imageUrl: string;
+  storagePath?: string;
+  storageOwnerId?: string;
+  fileName: string;
+  contentType: string;
+  bounds: MapImageBounds;
+}
+
+export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon | MapImage;
 
 export interface LayerStyle {
   borderColor: string;

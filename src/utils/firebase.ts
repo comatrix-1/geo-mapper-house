@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject as deleteStorageObject } from 'firebase/storage';
 import type { Layer, MapObject } from '../types';
 
 // ------------------------------------------------------------------
@@ -36,6 +37,7 @@ if (!getApps().length) {
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 // Development mode settings
 if (import.meta.env.DEV) {
@@ -46,7 +48,7 @@ if (import.meta.env.DEV) {
   // connectFirestoreEmulator(db, 'localhost', 8080);
 }
 
-export { auth, googleProvider, db };
+export { auth, googleProvider, db, storage };
 
 // Log Firebase initialization
 console.log('Firebase initialized with app:', app.name);
@@ -137,6 +139,27 @@ export const saveObject = async (uid: string, obj: MapObject) => {
 export const deleteObject = async (uid: string, objId: string) => {
     const objRef = doc(db, 'users', uid, 'mapObjects', objId);
     await deleteDoc(objRef);
+};
+
+/**
+ * Upload an image to Firebase Storage under a user-scoped path.
+ * Returns the download URL and the storage path for the uploaded file.
+ */
+export const uploadMapImage = async (uid: string, objectId: string, file: File): Promise<{ imageUrl: string; storagePath: string }> => {
+    const safeName = file.name.replace(/[\\/]/g, '_');
+    const storagePath = 'users/' + uid + '/mapImages/' + objectId + '/' + safeName;
+    const storageRef = ref(storage, storagePath);
+    await uploadBytes(storageRef, file, { contentType: file.type });
+    const imageUrl = await getDownloadURL(storageRef);
+    return { imageUrl, storagePath };
+};
+
+/**
+ * Delete an image file from Firebase Storage.
+ */
+export const deleteMapImage = async (storagePath: string): Promise<void> => {
+    const storageRef = ref(storage, storagePath);
+    await deleteStorageObject(storageRef);
 };
 
 /**

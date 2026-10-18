@@ -1,8 +1,9 @@
 import { useRef } from "react";
-import { Marker, Circle, Polyline, Polygon } from "react-leaflet";
+import { Marker, Circle, Polyline, Polygon, ImageOverlay } from "react-leaflet";
 import type { LatLngLiteral } from "leaflet";
 import type {
   MapCircle,
+  MapImage,
   MapObject,
   MapPoint,
   MapPolygon,
@@ -10,6 +11,7 @@ import type {
   LayerStyle,
 } from "../types";
 import { getCentroid } from "../utils/geoUtils";
+import { translateImageBounds, resizeImageBounds } from "../utils/imageOverlay";
 import {
   createMarkerIcon,
   createMoveHandleIcon,
@@ -350,6 +352,105 @@ export const EditablePolygon = ({
             })
           }
         />
+      )}
+    </>
+  );
+};
+
+export const EditableImage = ({
+  obj,
+  isSelected,
+  interactive,
+  setSelectedObjectId,
+  onUpdate,
+}: EditableObjectProps) => {
+  const image = obj as MapImage;
+  const { bounds } = image;
+
+  const center: LatLngLiteral = {
+    lat: (bounds.southWest.lat + bounds.northEast.lat) / 2,
+    lng: (bounds.southWest.lng + bounds.northEast.lng) / 2,
+  };
+
+  const onMoveDragEnd = (e: DragEvent) => {
+    const newPos = e.target.getLatLng();
+    const delta: LatLngLiteral = {
+      lat: newPos.lat - center.lat,
+      lng: newPos.lng - center.lng,
+    };
+    onUpdate(image.id, { bounds: translateImageBounds(bounds, delta) });
+  };
+
+  const onCornerDragEnd =
+    (corner: 'northWest' | 'northEast' | 'southWest' | 'southEast') =>
+    (e: DragEvent) => {
+      onUpdate(image.id, {
+        bounds: resizeImageBounds(bounds, corner, e.target.getLatLng()),
+      });
+    };
+
+  const cornerPositions = {
+    northWest: { lat: bounds.northEast.lat, lng: bounds.southWest.lng },
+    northEast: { ...bounds.northEast },
+    southWest: { ...bounds.southWest },
+    southEast: { lat: bounds.southWest.lat, lng: bounds.northEast.lng },
+  };
+
+  return (
+    <>
+      <ImageOverlay
+        bounds={[
+          [bounds.southWest.lat, bounds.southWest.lng],
+          [bounds.northEast.lat, bounds.northEast.lng],
+        ]}
+        url={image.imageUrl}
+        alt={image.title || 'Map image'}
+        opacity={1}
+        interactive={interactive}
+        eventHandlers={{
+          click: () => {
+            if (interactive) setSelectedObjectId(image.id);
+          },
+        }}
+      />
+      {isSelected && (
+        <>
+          <Marker
+            position={center}
+            icon={createMoveHandleIcon()}
+            draggable={true}
+            title="Move image overlay"
+            eventHandlers={{ dragend: onMoveDragEnd }}
+          />
+          <Marker
+            position={cornerPositions.northWest}
+            icon={createVertexIcon()}
+            draggable={true}
+            title="Resize image northwest corner"
+            eventHandlers={{ dragend: onCornerDragEnd('northWest') }}
+          />
+          <Marker
+            position={cornerPositions.northEast}
+            icon={createVertexIcon()}
+            draggable={true}
+            title="Resize image northeast corner"
+            eventHandlers={{ dragend: onCornerDragEnd('northEast') }}
+          />
+          <Marker
+            position={cornerPositions.southWest}
+            icon={createVertexIcon()}
+            draggable={true}
+            title="Resize image southwest corner"
+            eventHandlers={{ dragend: onCornerDragEnd('southWest') }}
+          />
+          <Marker
+            position={cornerPositions.southEast}
+            icon={createVertexIcon()}
+            draggable={true}
+            title="Resize image southeast corner"
+            eventHandlers={{ dragend: onCornerDragEnd('southEast') }}
+          />
+        </>
       )}
     </>
   );

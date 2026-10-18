@@ -6,6 +6,7 @@ import {
   useMap,
 } from "react-leaflet";
 import type { LatLngLiteral } from "leaflet";
+import type * as L from "leaflet";
 import type {
   DrawingMode,
   MapObject,
@@ -18,6 +19,7 @@ import {
   EditableCircle,
   EditablePolyline,
   EditablePolygon,
+  EditableImage,
 } from "./MapBoardEditable";
 import MapEventsContainer from "./MapBoardEvents";
 import { RulerMarkers } from "./RulerMarkers";
@@ -87,6 +89,19 @@ const RulerOverlay = ({ rulerPoints }: { rulerPoints: LatLngLiteral[] }) => (
   </>
 );
 
+/** Notifies the parent once when the map instance is ready. */
+const MapReadyHandler = ({
+  onMapReady,
+}: {
+  onMapReady?: (map: L.Map) => void;
+}) => {
+  const map = useMap();
+  useEffect(() => {
+    if (onMapReady) onMapReady(map);
+  }, [map, onMapReady]);
+  return null;
+};
+
 // --- Helpers ---
 
 const DEFAULT_STYLE: LayerStyle = {
@@ -118,6 +133,8 @@ interface MapBoardProps {
   flyToTarget?: { id: string; time: number } | null;
   onObjectUpdate?: (updatedObject: MapObject) => void;
   onNewObject?: (obj: MapObject) => void;
+  /** Called once with the live Leaflet map after it mounts. */
+  onMapReady?: (map: L.Map) => void;
 }
 
 const MapBoard: React.FC<MapBoardProps> = ({
@@ -134,6 +151,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
   flyToTarget,
   onObjectUpdate,
   onNewObject,
+  onMapReady,
 }) => {
   const cursor = drawingMode !== "none" ? "crosshair" : null;
 
@@ -166,6 +184,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
         doubleClickZoom={false}
       >
         <CursorController cursor={cursor} />
+        <MapReadyHandler onMapReady={onMapReady} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -209,6 +228,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
           if (obj.type === "circle") return <EditableCircle {...props} />;
           if (obj.type === "polyline") return <EditablePolyline {...props} />;
           if (obj.type === "polygon") return <EditablePolygon {...props} />;
+          if (obj.type === "image") return <EditableImage {...props} />;
           return null;
         })}
 
