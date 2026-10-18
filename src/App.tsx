@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import type * as L from 'leaflet';
 import MapBoard from './components/MapBoard';
 import LayerSidebar from './components/LayerSidebar';
 import Toolbar from './components/Toolbar';
@@ -6,6 +7,17 @@ import AuthWidget from './components/AuthWidget';
 import MapHintBanner from './components/MapHintBanner';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { saveProjectToFile, loadProjectFromFile } from './utils/fileImporter';
+import {
+  saveObject,
+  uploadMapImage,
+  deleteMapImage,
+} from './utils/firebase';
+import {
+  validateImageFile,
+  getImageDimensions,
+  createImageBounds,
+} from './utils/imageOverlay';
+import type { MapImage } from './types';
 import { useAuthUser } from './hooks/use-auth-user';
 import { useWorkspace } from './hooks/use-workspace';
 import { useMapSession } from './hooks/use-map-session';
@@ -51,6 +63,91 @@ const App: React.FC = () => {
     }
   };
 
+  // Image upload is orchestrated here (not in MapBoard) so the signed-in
+  // check, validation, storage, Firestore save, and orphan cleanup are one
+  // atomic flow. The map instance is supplied by MapBoard via onMapReady so
+  // the initial bounds can be computed from the live viewport.
+  const mapRef = useRef<L.Map | null>(null);
+  const [imageError, setError] = useState<string | null>(null);
+  const handleMapReady = (map: L.Map) => {
+    mapRef.current = map;
+  };
+
+  const handleImageFileSelected = async (file: File) => {
+    // Clear any previous image error so a fresh attempt starts clean.
+    setError(null);
+
+    if (!user) {
+      setError('Sign in is required to upload images.');
+      return;
+    }
+
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    // Generate the object id before upload so the storage path is stable
+    // even if the upload itself fails.
+    const objectId = crypto.randomUUID();
+
+    let uploaded;
+    try {
+      uploaded = await uploadMapImage(user.uid, objectId, file);
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      setError('Could not upload image.');
+      return;
+    }
+
+    const map = mapRef.current;
+    if (!map) {
+      // The map has not rendered yet: the uploaded file would be orphaned,
+      // so remove it before surfacing the error.
+      try {
+        await deleteMapImage(uploaded.storagePath);
+      } catch (cleanupErr) {
+        console.error('Failed to clean up uploaded image:', cleanupErr);
+      }
+      setError('Map is still loading.');
+      return;
+    }
+
+    const { width, height } = await getImageDimensions(file);
+    const bounds = createImageBounds(map, width / height);
+    const imageObject: MapImage = {
+      id: objectId,
+      layerId: workspace.activeLayerId,
+      type: 'image',
+      title: file.name.replace(/\.[^.]+$/, ''),
+      description: '',
+      imageUrl: uploaded.imageUrl,
+      storagePath: uploaded.storagePath,
+      storageOwnerId: user.uid,
+      fileName: file.name,
+      contentType: file.type,
+      bounds,
+    };
+
+    // Persist before touching local state: if the save fails the uploaded
+    // file is removed and the user's map is left unchanged.
+    try {
+      await saveObject(user.uid, imageObject);
+    } catch (err) {
+      console.error('Failed to save image overlay:', err);
+      try {
+        await deleteMapImage(uploaded.storagePath);
+      } catch (cleanupErr) {
+        console.error('Failed to clean up uploaded image:', cleanupErr);
+      }
+      setError('Could not save image overlay.');
+      return;
+    }
+
+    workspace.setObjects((prev) => [...prev, imageObject]);
+  };
+
   return (
     <SidebarProvider className="relative h-screen overflow-hidden bg-background">
 
@@ -65,7 +162,17 @@ const App: React.FC = () => {
         activeMode={session.drawingMode}
         setMode={session.setMode}
         canDraw={canDraw}
+        onImageFileSelected={handleImageFileSelected}
       />
+
+      {imageError && (
+        <div
+          role="alert"
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1200] bg-destructive/90 text-destructive-foreground text-sm px-4 py-2 rounded-md shadow-lg"
+        >
+          {imageError}
+        </div>
+      )}
 
       {/* Left panel: shadcn sidebar (layers + selected object details) */}
       <LayerSidebar
@@ -142,6 +249,7 @@ const App: React.FC = () => {
           flyToTarget={session.flyToTarget}
           onObjectUpdate={workspace.persistObject}
           onNewObject={workspace.persistObject}
+          onMapReady={handleMapReady}
         />
       </SidebarInset>
     </SidebarProvider>

@@ -45,6 +45,8 @@ Validate before upload. On upload failure, leave the map unchanged and show an e
 
 ## Verification
 
+Use Playwright MCP to view the UI.
+
 Cover image type compatibility and JSON round trips; toolbar file selection and validation; upload success/failure and orphan cleanup; initial viewport-relative bounds; overlay rendering, moving, resizing, and metadata editing; layer visibility/listing; and owned versus imported Storage cleanup. Run the existing build, lint, and test suite as appropriate during implementation.
 
 The 30% viewport-width fraction should be a named constant so it can be adjusted without changing the placement algorithm.
