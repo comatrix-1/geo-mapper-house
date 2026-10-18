@@ -12,7 +12,7 @@ import {
   formatDistance,
   formatArea,
 } from "../utils/geoUtils"
-import { Save, Trash2, Check, Ruler, Type } from "lucide-react"
+import { Save, Trash2, Check, Ruler } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

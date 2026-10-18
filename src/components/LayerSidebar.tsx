@@ -17,7 +17,6 @@ import {
   Save,
   AlertTriangle,
   FileJson,
-  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { importFile } from "../utils/fileImporter";
@@ -25,12 +24,10 @@ import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import ObjectDetailsPanel from "./ObjectDetailsPanel";
