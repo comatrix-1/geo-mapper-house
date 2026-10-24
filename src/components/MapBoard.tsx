@@ -6,8 +6,10 @@ import {
   useMap,
 } from "react-leaflet";
 import type { LatLngLiteral } from "leaflet";
+import type * as L from "leaflet";
 import type {
   DrawingMode,
+  GeometryEditMode,
   MapObject,
   Layer,
   LayerStyle,
@@ -18,33 +20,40 @@ import {
   EditableCircle,
   EditablePolyline,
   EditablePolygon,
+  EditableImage,
 } from "./MapBoardEditable";
 import MapEventsContainer from "./MapBoardEvents";
 import { RulerMarkers } from "./RulerMarkers";
 
 // --- Internal Components ---
 
-const FlyToController = ({
-  flyToTarget,
+/**
+ * Moves the viewport onto the focused object. Only the centre changes: the
+ * current zoom level is preserved, so focusing never rescales the map.
+ */
+const FocusController = ({
+  focusTarget,
   objects,
 }: {
-  flyToTarget: { id: string; time: number } | null | undefined;
+  focusTarget: { id: string; token: number } | null | undefined;
   objects: MapObject[];
 }) => {
   const map = useMap();
-  const lastFlyToTimeRef = useRef<number>(0);
+  const lastFocusTokenRef = useRef<number>(0);
 
   useEffect(() => {
-    // Only fly if we have a target and it's a new request (timestamp is newer than last handled)
-    if (flyToTarget && flyToTarget.time > lastFlyToTimeRef.current) {
-      const obj = objects.find((o) => o.id === flyToTarget.id);
+    // Only focus on a new request (the token is strictly increasing).
+    if (focusTarget && focusTarget.token > lastFocusTokenRef.current) {
+      const obj = objects.find((o) => o.id === focusTarget.id);
       if (obj) {
         const center = getObjectCenter(obj);
-        map.flyTo(center, 16, { duration: 1.5 });
-        lastFlyToTimeRef.current = flyToTarget.time;
+        // panTo re-centres without touching the zoom; flyTo/setView would
+        // change the zoom level.
+        map.panTo(center, { animate: true, duration: 1.5 });
+        lastFocusTokenRef.current = focusTarget.token;
       }
     }
-  }, [flyToTarget, objects, map]);
+  }, [focusTarget, objects, map]);
 
   return null;
 };
@@ -87,6 +96,19 @@ const RulerOverlay = ({ rulerPoints }: { rulerPoints: LatLngLiteral[] }) => (
   </>
 );
 
+/** Notifies the parent once when the map instance is ready. */
+const MapReadyHandler = ({
+  onMapReady,
+}: {
+  onMapReady?: (map: L.Map) => void;
+}) => {
+  const map = useMap();
+  useEffect(() => {
+    if (onMapReady) onMapReady(map);
+  }, [map, onMapReady]);
+  return null;
+};
+
 // --- Helpers ---
 
 const DEFAULT_STYLE: LayerStyle = {
@@ -113,11 +135,16 @@ interface MapBoardProps {
   setObjects: React.Dispatch<React.SetStateAction<MapObject[]>>;
   selectedObjectId: string | null;
   setSelectedObjectId: (id: string | null) => void;
+  /** Selection-scoped geometry editing mode for images, lines and polygons. */
+  geometryEditMode: GeometryEditMode;
   rulerPoints: LatLngLiteral[];
   setRulerPoints: React.Dispatch<React.SetStateAction<LatLngLiteral[]>>;
-  flyToTarget?: { id: string; time: number } | null;
+  /** Object to focus: the map pans onto it, keeping the current zoom. */
+  focusTarget?: { id: string; token: number } | null;
   onObjectUpdate?: (updatedObject: MapObject) => void;
   onNewObject?: (obj: MapObject) => void;
+  /** Called once with the live Leaflet map after it mounts. */
+  onMapReady?: (map: L.Map) => void;
 }
 
 const MapBoard: React.FC<MapBoardProps> = ({
@@ -129,11 +156,13 @@ const MapBoard: React.FC<MapBoardProps> = ({
   setObjects,
   selectedObjectId,
   setSelectedObjectId,
+  geometryEditMode,
   rulerPoints,
   setRulerPoints,
-  flyToTarget,
+  focusTarget,
   onObjectUpdate,
   onNewObject,
+  onMapReady,
 }) => {
   const cursor = drawingMode !== "none" ? "crosshair" : null;
 
@@ -166,12 +195,13 @@ const MapBoard: React.FC<MapBoardProps> = ({
         doubleClickZoom={false}
       >
         <CursorController cursor={cursor} />
+        <MapReadyHandler onMapReady={onMapReady} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <FlyToController flyToTarget={flyToTarget} objects={objects} />
+        <FocusController focusTarget={focusTarget} objects={objects} />
 
         <MapEventsContainer
           drawingMode={drawingMode}
@@ -201,7 +231,10 @@ const MapBoard: React.FC<MapBoardProps> = ({
             style,
             isSelected,
             interactive: isInteractive,
-            setSelectedObjectId,
+            geometryEditMode,
+            // Clicking an object on the map only selects it. The viewport is
+            // left where the user put it.
+            onSelect: setSelectedObjectId,
             onUpdate: handleObjectUpdate,
           };
 
@@ -209,6 +242,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
           if (obj.type === "circle") return <EditableCircle {...props} />;
           if (obj.type === "polyline") return <EditablePolyline {...props} />;
           if (obj.type === "polygon") return <EditablePolygon {...props} />;
+          if (obj.type === "image") return <EditableImage {...props} />;
           return null;
         })}
 

@@ -8,10 +8,14 @@ author: comatrix
 targets:
 - claude
 - codex
+- opencode
 - kiro
 dependencies:
   apm: 
     - obra/superpowers
+    - supabase/agent-skills
+    - Graphify-Labs/graphify/graphify
+    - nextlevelbuilder/ui-ux-pro-max-skill
   mcp: []
 includes: auto
 scripts: {}

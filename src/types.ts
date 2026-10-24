@@ -2,12 +2,25 @@ import type { LatLngLiteral } from 'leaflet';
 
 export type DrawingMode = 'none' | 'point' | 'circle' | 'polyline' | 'polygon' | 'ruler';
 
+/**
+ * Transient, selection-scoped geometry editing mode for images, lines and
+ * polygons. `resize` shows four bounding-box handles that scale the whole
+ * object; `vertices` exposes each stored vertex for independent editing.
+ * Never persisted — it lives only in the map session and resets per selection.
+ */
+export type GeometryEditMode = 'resize' | 'vertices';
+
 export interface BaseMapObject {
   id: string;
   layerId: string;
-  type: 'point' | 'circle' | 'polyline' | 'polygon';
+  type: 'point' | 'circle' | 'polyline' | 'polygon' | 'image';
   title: string;
   description: string;
+}
+
+export interface MapImageBounds {
+  southWest: LatLngLiteral;
+  northEast: LatLngLiteral;
 }
 
 export interface MapPoint extends BaseMapObject {
@@ -31,7 +44,17 @@ export interface MapPolygon extends BaseMapObject {
   positions: LatLngLiteral[];
 }
 
-export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon;
+export interface MapImage extends BaseMapObject {
+  type: 'image';
+  imageUrl: string;
+  storagePath?: string;
+  storageOwnerId?: string;
+  fileName: string;
+  contentType: string;
+  bounds: MapImageBounds;
+}
+
+export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon | MapImage;
 
 export interface LayerStyle {
   borderColor: string;

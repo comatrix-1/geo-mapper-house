@@ -1,4 +1,12 @@
 import L from 'leaflet';
+import type { ResizeCursor } from '../utils/resizeCursor';
+
+/**
+ * The cursor a handle icon can present: either the axis or diagonal a
+ * bounding-box resize handle moves along, or the four-way `move` of a handle
+ * that travels freely in any direction.
+ */
+export type HandleCursor = ResizeCursor | 'move';
 
 export const createMarkerIcon = (color: string = '#3b82f6') => {
   // Manual SVG construction to avoid react-dom/server dependency
@@ -42,9 +50,16 @@ export const createMoveHandleIcon = () => {
   });
 };
 
-export const createVertexIcon = () => {
+/**
+ * A vertex handle. When a cursor is given the handle shows it, so the user
+ * can see how the handle will move before dragging it: a directional resize
+ * cursor in four-handle resize mode, a four-way move cursor on vertex handles.
+ */
+export const createVertexIcon = (cursor?: HandleCursor | null) => {
+    const cursorClass = cursor ? ` geo-handle--${cursor}` : '';
+
     return L.divIcon({
-        className: 'bg-white border-2 border-gray-800 rounded-full',
+        className: `bg-white border-2 border-gray-800 rounded-full${cursorClass}`,
         iconSize: [12, 12],
         iconAnchor: [6, 6],
     });

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "supabase": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://mcp.supabase.com/mcp?features=docs"
+    }
+  }
+}

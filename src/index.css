@@ -27,3 +27,28 @@ html, body, #root {
 .leaflet-top.leaflet-left {
   left: 24px;
 }
+
+/* Directional cursors for the vertex resize handles. The extra
+   `.leaflet-marker-icon` selector outranks Leaflet's own
+   `.leaflet-interactive { cursor: pointer }` rule. */
+.leaflet-marker-icon.geo-handle--ns {
+  cursor: ns-resize;
+}
+
+.leaflet-marker-icon.geo-handle--ew {
+  cursor: ew-resize;
+}
+
+.leaflet-marker-icon.geo-handle--nesw {
+  cursor: nesw-resize;
+}
+
+.leaflet-marker-icon.geo-handle--nwse {
+  cursor: nwse-resize;
+}
+
+/* Vertex-mode handles move freely in any direction, so they show the
+   four-way move cursor instead of a resize axis. */
+.leaflet-marker-icon.geo-handle--move {
+  cursor: move;
+}

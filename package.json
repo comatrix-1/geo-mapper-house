@@ -17,6 +17,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@supabase/supabase-js": "^2.118.0",
     "@tmcw/togeojson": "^7.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

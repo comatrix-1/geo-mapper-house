@@ -79,6 +79,11 @@ export const getObjectCenter = (obj: MapObject): LatLngLiteral => {
         case 'circle': return obj.center;
         case 'polyline':
         case 'polygon': return getCentroid(obj.positions);
+        case 'image':
+          return {
+            lat: (obj.bounds.southWest.lat + obj.bounds.northEast.lat) / 2,
+            lng: (obj.bounds.southWest.lng + obj.bounds.northEast.lng) / 2,
+          };
         default: return { lat: 0, lng: 0 };
     }
 };
