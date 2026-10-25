@@ -191,14 +191,18 @@ const MapBoard: React.FC<MapBoardProps> = ({
       <MapContainer
         center={[1.3360910507988213, 103.83350372314455]}
         zoom={13}
+        maxZoom={21}
         style={{ height: "100%", width: "100%" }}
         doubleClickZoom={false}
       >
         <CursorController cursor={cursor} />
         <MapReadyHandler onMapReady={onMapReady} />
+
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.google.com/">Google</a> contributors'
+          url="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          maxZoom={21}
+          subdomains={["mt0", "mt1", "mt2", "mt3"]}
         />
 
         <FocusController focusTarget={focusTarget} objects={objects} />
