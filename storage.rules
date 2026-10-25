@@ -1,0 +1,7 @@
+# Supabase Storage does not use Firebase Storage rules. Configure the Firebase
+# project as a Third-Party Auth provider in Supabase, then apply the policies
+# documented in README.md to storage.objects through the Supabase SQL Editor.
+#
+# The Supabase bucket must be public because map objects persist getPublicUrl()
+# results. RLS policies still restrict writes and object metadata operations to
+# users/<Firebase UID>/... paths.

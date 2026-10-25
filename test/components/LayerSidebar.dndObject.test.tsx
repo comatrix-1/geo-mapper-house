@@ -45,6 +45,8 @@ const baseProps = {
   selectedObjectId: null as string | null,
   onObjectClick: vi.fn(),
   onObjectDeselect: vi.fn(),
+  geometryEditMode: 'resize' as const,
+  onGeometryEditModeChange: vi.fn(),
   onObjectUpdate: vi.fn(),
   onObjectDelete: vi.fn(),
   onImportData: vi.fn(),

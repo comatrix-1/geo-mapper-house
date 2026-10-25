@@ -31,14 +31,16 @@ dist-ssr
 #Ignore vscode AI rules
 .github\instructions\codacy.instructions.md
 
-CLAUDE.md
-.claude
-.qoder
-.kiro
-
-
 # APM dependencies
 apm_modules/
 
-# Redundant because of APM
-.agents
+# Graphify
+graphify-out/
+.qoder
+
+
+
+
+
+
+

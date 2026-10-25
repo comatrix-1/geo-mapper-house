@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "superpowers SessionStart 1",
+      "trigger": "SessionStart",
+      "action": {
+        "type": "command",
+        "command": "\".kiro/hooks/superpowers/hooks/run-hook.cmd\" session-start"
+      },
+      "matcher": "startup|clear|compact"
+    }
+  ]
+}

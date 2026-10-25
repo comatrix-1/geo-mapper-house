@@ -2,6 +2,7 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import type { Layer, MapObject } from '../types';
+import { setFirebaseAccessTokenProvider } from './supabase';
 
 // ------------------------------------------------------------------
 // CRITICAL: You must replace this config with your own from Firebase Console!
@@ -18,7 +19,6 @@ const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
@@ -34,6 +34,7 @@ if (!getApps().length) {
 
 // Initialize Services
 const auth = getAuth(app);
+setFirebaseAccessTokenProvider(async () => auth.currentUser?.getIdToken() ?? null);
 const googleProvider = new GoogleAuthProvider();
 const db = getFirestore(app);
 
@@ -50,6 +51,10 @@ export { auth, googleProvider, db };
 
 // Log Firebase initialization
 console.log('Firebase initialized with app:', app.name);
+
+// Export Supabase client for storage operations
+// (re-exported from ./supabase.ts for convenience in components)
+export { supabase } from './supabase';
 
 
 // --- Firestore Helpers for Scalable Data ---
@@ -138,6 +143,16 @@ export const deleteObject = async (uid: string, objId: string) => {
     const objRef = doc(db, 'users', uid, 'mapObjects', objId);
     await deleteDoc(objRef);
 };
+
+// Image storage moved to Supabase (see ./supabase.ts). These re-exports keep
+// the call sites in App.tsx and the tests agnostic to which backend stores
+// the file. The storage path shape is unchanged: users/<uid>/mapImages/<objectId>/<fileName>.
+export {
+  uploadMapImage,
+  deleteMapImage,
+  buildMapImageStoragePath,
+} from './supabase';
+export { MAP_IMAGES_BUCKET } from './supabase';
 
 /**
  * Save multiple objects (e.g., import) using Batch writes.

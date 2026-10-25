@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
-import type { Layer, LayerStyle, MapObject } from "../types";
+import type { Layer, LayerStyle, MapObject, GeometryEditMode } from "../types";
 import { toDragCommand } from "../utils/dragDropState";
 import { SortableLayerRow, DraggableObjectItem } from "./LayerRow";
 import {
@@ -17,7 +17,6 @@ import {
   Save,
   AlertTriangle,
   FileJson,
-  SlidersHorizontal,
   X,
 } from "lucide-react";
 import { importFile } from "../utils/fileImporter";
@@ -25,12 +24,10 @@ import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import ObjectDetailsPanel from "./ObjectDetailsPanel";
@@ -59,6 +56,9 @@ interface LayerSidebarProps {
   selectedObjectId: string | null;
   onObjectClick: (id: string) => void;
   onObjectDeselect: () => void;
+  /** Selection-scoped geometry editing mode shown above the object details. */
+  geometryEditMode: GeometryEditMode;
+  onGeometryEditModeChange: (mode: GeometryEditMode) => void;
   onObjectUpdate: (id: string, updates: Partial<MapObject>) => void;
   onObjectDelete: (id: string) => void;
   onImportData: (layers: Layer[], objects: MapObject[]) => void;
@@ -279,6 +279,8 @@ const LayerSidebar = ({
   selectedObjectId,
   onObjectClick,
   onObjectDeselect,
+  geometryEditMode,
+  onGeometryEditModeChange,
   onObjectUpdate,
   onObjectDelete,
   onImportData,
@@ -485,6 +487,8 @@ const LayerSidebar = ({
               <ObjectDetailsPanel
                 key={selectedObject.id}
                 obj={selectedObject}
+                geometryEditMode={geometryEditMode}
+                onGeometryEditModeChange={onGeometryEditModeChange}
                 onUpdate={onObjectUpdate}
                 onDelete={onObjectDelete}
               />

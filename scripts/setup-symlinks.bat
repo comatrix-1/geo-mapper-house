@@ -7,39 +7,11 @@ echo Project root: %cd%
 echo.
 
 REM ----------------------------
-REM Ensure AGENTS.md is source of truth
-REM ----------------------------
-if not exist "AGENTS.md" (
-    echo. > "AGENTS.md"
-    echo Created AGENTS.md (source of truth)
-)
-
-REM ----------------------------
-REM Ensure CLAUDE.md is symlink -> AGENTS.md
-REM ----------------------------
-if exist "CLAUDE.md" (
-    echo CLAUDE.md already exists - ensure it is a symlink manually if needed
-) else (
-    mklink "CLAUDE.md" "AGENTS.md"
-    echo Created CLAUDE.md symlink -> AGENTS.md
-)
-
-REM ----------------------------
-REM Ensure .agents exists
+REM Ensure .agents exists (shared rules source)
 REM ----------------------------
 if not exist ".agents\" (
     mkdir ".agents"
     echo Created .agents
-)
-
-REM ----------------------------
-REM Ensure .claude -> .agents symlink
-REM ----------------------------
-if exist ".claude" (
-    echo .claude already exists - skipping
-) else (
-    mklink /D ".claude" ".agents"
-    echo Created .claude symlink -> .agents
 )
 
 REM ----------------------------
@@ -53,13 +25,17 @@ if exist ".qoder" (
 )
 
 REM ----------------------------
-REM Ensure .kiro -> .agents symlink
+REM Copy .codex\hooks.json -> .qoder\settings.json
 REM ----------------------------
-if exist ".kiro" (
-    echo .kiro already exists - skipping
+if exist ".codex\hooks.json" (
+    copy /Y ".codex\hooks.json" ".qoder\settings.json" >nul
+    if errorlevel 1 (
+        echo ERROR: failed to copy .codex\hooks.json
+    ) else (
+        echo Copied .codex\hooks.json -^> .qoder\settings.json
+    )
 ) else (
-    mklink /D ".kiro" ".agents"
-    echo Created .kiro symlink -> .agents
+    echo .codex\hooks.json not found - skipping
 )
 
 REM ----------------------------
@@ -74,10 +50,7 @@ if not exist ".gitignore" (
 REM Ensure .gitignore ends with a newline before appending new lines
 echo.>> ".gitignore"
 
-call :AddToGitIgnore "CLAUDE.md"
-call :AddToGitIgnore ".claude"
 call :AddToGitIgnore ".qoder"
-call :AddToGitIgnore ".kiro"
 
 echo.
 echo Done.

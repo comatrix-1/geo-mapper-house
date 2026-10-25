@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type {
+  GeometryEditMode,
   MapCircle,
   MapObject,
   MapPoint,
@@ -12,16 +13,68 @@ import {
   formatDistance,
   formatArea,
 } from "../utils/geoUtils"
-import { Save, Trash2, Check, Ruler, Type } from "lucide-react"
+import { Save, Trash2, Check, Ruler } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 interface ObjectDetailsPanelProps {
   obj: MapObject
+  /** Selection-scoped geometry editing mode, shown for images, lines and polygons. */
+  geometryEditMode: GeometryEditMode
+  onGeometryEditModeChange: (mode: GeometryEditMode) => void
   /** Patch the object; merged with the existing object and persisted by the parent. */
   onUpdate: (id: string, updates: Partial<MapObject>) => void
   onDelete: (id: string) => void
 }
+
+/** Object types that can switch between four-handle resize and vertex editing. */
+const GEOMETRY_MODE_TYPES: ReadonlySet<MapObject["type"]> = new Set([
+  "image",
+  "polyline",
+  "polygon",
+])
+
+/**
+ * Accessible resize / vertex choice shown above the object details. Native
+ * radios give grouping, labelling and arrow-key navigation for free, so no
+ * extra keyboard handling is needed.
+ */
+const GeometryEditModeChoice = ({
+  value,
+  onChange,
+}: {
+  value: GeometryEditMode
+  onChange: (mode: GeometryEditMode) => void
+}) => (
+  <div className="space-y-1.5" role="radiogroup" aria-label="Geometry editing">
+    <span className="block text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider mb-1">
+      Geometry editing
+    </span>
+    <div className="flex gap-2">
+      {(
+        [
+          { mode: "resize", label: "Resize" },
+          { mode: "vertices", label: "Edit vertices" },
+        ] as const
+      ).map(({ mode, label }) => (
+        <label
+          key={mode}
+          className="flex-1 flex items-center justify-center gap-1.5 text-xs rounded-md border border-sidebar-border px-2 py-1.5 cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary"
+        >
+          <input
+            type="radio"
+            name="geometry-edit-mode"
+            value={mode}
+            checked={value === mode}
+            onChange={() => onChange(mode)}
+            className="sr-only"
+          />
+          {label}
+        </label>
+      ))}
+    </div>
+  </div>
+)
 
 /** Per-type geometry details + type-specific edit controls. */
 const ObjectDetails = ({ obj }: { obj: MapObject }) => {
@@ -162,6 +215,8 @@ const ObjectEditExtras = ({
 
 const ObjectDetailsPanel = ({
   obj,
+  geometryEditMode,
+  onGeometryEditModeChange,
   onUpdate,
   onDelete,
 }: ObjectDetailsPanelProps) => {
@@ -177,6 +232,13 @@ const ObjectDetailsPanel = ({
 
   return (
     <div className="flex flex-col gap-2.5">
+      {GEOMETRY_MODE_TYPES.has(obj.type) && (
+        <GeometryEditModeChoice
+          value={geometryEditMode}
+          onChange={onGeometryEditModeChange}
+        />
+      )}
+
       <div className="space-y-1.5">
         <label
           htmlFor="object-title-input"

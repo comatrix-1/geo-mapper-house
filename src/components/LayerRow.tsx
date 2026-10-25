@@ -15,6 +15,7 @@ import {
   Circle,
   PenTool,
   Hexagon,
+  Image,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -233,6 +234,8 @@ const getObjectIcon = (type: MapObject['type']) => {
       return <PenTool size={14} />
     case 'polygon':
       return <Hexagon size={14} />
+    case 'image':
+      return <Image size={14} />
   }
 }
 
