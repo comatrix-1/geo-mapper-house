@@ -28,6 +28,34 @@ html, body, #root {
   left: 24px;
 }
 
+/* Basemap style toggle (bottom-left Leaflet control). */
+.geo-basemap-toggle {
+  display: flex;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+}
+
+.geo-basemap-toggle__option {
+  padding: 5px 10px;
+  border: none;
+  border-right: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  font: 12px/1.5 Helvetica, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.geo-basemap-toggle__option:last-child {
+  border-right: none;
+}
+
+.geo-basemap-toggle__option--active {
+  background: #3388ff;
+  color: #fff;
+}
+
 /* Directional cursors for the vertex resize handles. The extra
    `.leaflet-marker-icon` selector outranks Leaflet's own
    `.leaflet-interactive { cursor: pointer }` rule. */

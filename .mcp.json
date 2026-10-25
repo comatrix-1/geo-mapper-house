@@ -8,8 +8,11 @@
       "type": "stdio",
       "command": "npx",
       "args": [
-        "@playwright/mcp@latest"
-      ]
+        "@playwright/mcp@latest",
+        "--browser",
+        "msedge"
+      ],
+      "disabled": true
     }
   }
 }
