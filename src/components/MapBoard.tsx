@@ -286,7 +286,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
       <MapContainer
         center={[1.3360910507988213, 103.83350372314455]}
         zoom={13}
-        maxZoom={21}
+        maxZoom={28}
         style={{ height: "100%", width: "100%" }}
         doubleClickZoom={false}
       >
