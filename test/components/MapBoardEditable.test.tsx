@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import L from 'leaflet';
 import type { LatLngLiteral } from 'leaflet';
@@ -9,6 +9,7 @@ import {
   EditablePoint,
   EditablePolygon,
   EditablePolyline,
+  ROTATION_CURSOR,
 } from '../../src/components/MapBoardEditable';
 import type {
   MapCircle,
@@ -33,6 +34,12 @@ const leafletCalls = vi.hoisted(() => ({
   setCircleCenter: [] as LatLngLiteral[],
   draggingDisable: vi.fn(),
   draggingEnable: vi.fn(),
+  mapOn: vi.fn(),
+  mapOff: vi.fn(),
+  /** The stand-in for `map.getContainer()`, where map-level gestures land. */
+  mapContainer: null as HTMLElement | null,
+  /** Zoom of the mocked map; doubling it doubles every projected distance. */
+  zoom: 13,
 }));
 
 /** Clears the recorded Leaflet calls between tests. */
@@ -42,6 +49,7 @@ const resetLeafletCalls = () => {
   leafletCalls.setLatLngs = [];
   leafletCalls.setRadius = [];
   leafletCalls.setCircleCenter = [];
+  leafletCalls.zoom = 13;
 };
 
 // Every handle gesture must arm the one-shot trailing-click suppression, so
@@ -94,8 +102,10 @@ vi.mock('react-leaflet', () => {
     React.forwardRef(
       (
         {
+          positions,
           eventHandlers,
         }: {
+          positions?: LatLngLiteral[];
           eventHandlers?: Record<string, DragEndHandler>;
         },
         ref: React.Ref<unknown>,
@@ -103,8 +113,8 @@ vi.mock('react-leaflet', () => {
         // The live drag previews call through these Leaflet path methods, so
         // tests observe them the same way the map would.
         React.useImperativeHandle(ref, () => ({
-          setLatLngs: (positions: LatLngLiteral[]) => {
-            leafletCalls.setLatLngs.push(positions);
+          setLatLngs: (positionsToDraw: LatLngLiteral[]) => {
+            leafletCalls.setLatLngs.push(positionsToDraw);
           },
           setLatLng: (position: LatLngLiteral) => {
             leafletCalls.setCircleCenter.push(position);
@@ -115,6 +125,8 @@ vi.mock('react-leaflet', () => {
         }));
         return React.createElement('div', {
           'data-testid': testId,
+          // Lets tests read which shape the component asked to draw.
+          ...(positions ? { 'data-positions': JSON.stringify(positions) } : {}),
           ...convertEventHandlers(eventHandlers),
         });
       },
@@ -124,10 +136,12 @@ vi.mock('react-leaflet', () => {
     Marker: React.forwardRef(
       (
         {
+          position,
           title,
           bubblingMouseEvents,
           eventHandlers,
         }: {
+          position?: LatLngLiteral;
           title?: string;
           bubblingMouseEvents?: boolean;
           eventHandlers?: Record<string, DragEndHandler>;
@@ -135,47 +149,53 @@ vi.mock('react-leaflet', () => {
         ref: React.Ref<unknown>,
       ) => {
         React.useImperativeHandle(ref, () => ({
-          setLatLng: (position: LatLngLiteral) => {
-            leafletCalls.setLatLng.push({ position });
+          setLatLng: (newPosition: LatLngLiteral) => {
+            leafletCalls.setLatLng.push({ position: newPosition });
           },
         }));
         return React.createElement('div', {
           'data-testid': 'marker',
           title: title,
           'aria-label': title,
+          // The handle's drawn position, so tests can follow the frame.
+          'data-lat': String(position?.lat),
+          'data-lng': String(position?.lng),
           // Recorded so tests can assert handles never reach the map itself.
           'data-bubbling': String(bubblingMouseEvents !== false),
           ...convertEventHandlers(eventHandlers),
         });
       },
     ),
-    ImageOverlay: React.forwardRef(
+    SVGOverlay: React.forwardRef(
       (
         {
-          url,
-          alt,
+          attributes,
           children,
           eventHandlers,
         }: {
-          url?: string;
-          alt?: string;
+          attributes?: Record<string, string>;
           children?: React.ReactNode;
           eventHandlers?: Record<string, DragEndHandler>;
         },
         ref: React.Ref<unknown>,
       ) => {
+        const svgRef = React.useRef<SVGSVGElement>(null);
         React.useImperativeHandle(ref, () => ({
           setBounds: (bounds: unknown) => {
             leafletCalls.setBounds.push(bounds);
           },
+          // Leaflet's SVGOverlay element is the <svg> itself, which is where
+          // the user space is written during a live preview.
+          getElement: () => svgRef.current,
         }));
-        return React.createElement('div', {
-          'data-testid': 'image-overlay',
-          className: 'image-overlay',
-          ...convertEventHandlers(eventHandlers),
-        },
-          React.createElement('img', { src: url, alt: alt || 'Map image' }),
-          children,
+        return React.createElement(
+          'div',
+          {
+            'data-testid': 'image-overlay',
+            className: 'image-overlay',
+            ...convertEventHandlers(eventHandlers),
+          },
+          React.createElement('svg', { ref: svgRef, ...attributes }, children),
         );
       },
     ),
@@ -186,16 +206,23 @@ vi.mock('react-leaflet', () => {
     Polygon: shapeLayer('polygon'),
     useMap: () => ({
       getCenter: () => ({ lat: 0, lng: 0 }),
-      getZoom: () => 13,
+      getZoom: () => leafletCalls.zoom,
       // A linear projection whose inverse round-trips, so resize maths stay
-      // readable: x = lng, y = -lat.
-      project: (ll: { lat: number; lng: number }) => ({ x: ll.lng, y: -ll.lat }),
+      // readable: x = lng, y = -lat, scaled by the zoom like Leaflet's plane.
+      project: (ll: { lat: number; lng: number }) => ({
+        x: ll.lng * 2 ** (leafletCalls.zoom - 13),
+        y: -ll.lat * 2 ** (leafletCalls.zoom - 13),
+      }),
       // `-0` would leak out of a plain negation and break `toEqual`, so the
       // inverse keeps zeros positive.
-      unproject: (p: { x: number; y: number }) => ({
-        lat: p.y === 0 ? 0 : -p.y,
-        lng: p.x === 0 ? 0 : p.x,
-      }),
+      unproject: (p: { x: number; y: number }) => {
+        const lng = p.x * 2 ** (13 - leafletCalls.zoom);
+        const lat = -p.y * 2 ** (13 - leafletCalls.zoom);
+        return {
+          lat: lat === 0 ? 0 : lat,
+          lng: lng === 0 ? 0 : lng,
+        };
+      },
       // Inverts the projection at the mocked zoom, so a circle's stored meter
       // radius round-trips through its projected radius.
       distance: (a: LatLngLiteral, b: LatLngLiteral) =>
@@ -207,6 +234,19 @@ vi.mock('react-leaflet', () => {
       dragging: {
         disable: leafletCalls.draggingDisable,
         enable: leafletCalls.draggingEnable,
+      },
+      // The rotation gesture listens on the map container itself, so tests
+      // press there and the pan/zoom listeners are only counted.
+      on: leafletCalls.mapOn,
+      off: leafletCalls.mapOff,
+      getContainer: () => {
+        if (!leafletCalls.mapContainer) {
+          const container = document.createElement('div');
+          container.setAttribute('data-testid', 'map-container');
+          document.body.append(container);
+          leafletCalls.mapContainer = container;
+        }
+        return leafletCalls.mapContainer;
       },
     }),
     MapContainer: ({ children }: { children?: React.ReactNode }) =>
@@ -234,6 +274,53 @@ const renderedHandleCursors = (): string[] =>
     )
     .filter((cursor) => cursor !== '');
 
+/** Reads the geographic position a mocked marker was drawn at. */
+const markerPosition = (handle: HTMLElement): LatLngLiteral => ({
+  lat: Number(handle.dataset.lat),
+  lng: Number(handle.dataset.lng),
+});
+
+/** The turn the component has painted into the overlay's raster. */
+const rasterTransform = (container: HTMLElement): string =>
+  container.querySelector('image')!.getAttribute('transform')!;
+
+/**
+ * The angle and pivot of that turn, parsed because a projected pivot can
+ * carry floating-point dust from the geometry that produced it.
+ */
+const readTransform = (container: HTMLElement) => {
+  const [angle, pivotX, pivotY] = rasterTransform(container)
+    .match(/rotate\(([^)]+)\)/)![1]
+    .split(' ')
+    .map(Number);
+  return { angle, pivotX, pivotY };
+};
+
+/** The SVG user space the overlay draws into, as [x, y, width, height]. */
+const readViewBox = (container: HTMLElement): number[] =>
+  container
+    .querySelector('svg')!
+    .getAttribute('viewBox')!
+    .split(' ')
+    .map(Number);
+
+/** Compares a list of numbers with the slack trigonometry needs. */
+const expectCloseNumbers = (actual: number[], expected: number[]) => {
+  expect(actual).toHaveLength(expected.length);
+  expected.forEach((value, index) => {
+    expect(actual[index]).toBeCloseTo(value, 6);
+  });
+};
+
+/**
+ * Compares positions the way a rotated frame produces them: a quarter turn
+ * leaves floating-point dust from cos(90 degrees) on the zero axis.
+ */
+const expectClosePosition = (actual: LatLngLiteral, expected: LatLngLiteral) => {
+  expect(actual.lat).toBeCloseTo(expected.lat, 6);
+  expect(actual.lng).toBeCloseTo(expected.lng, 6);
+};
+
 const imageObject: MapImage = {
   id: 'img-1',
   layerId: 'layer-1',
@@ -248,6 +335,21 @@ const imageObject: MapImage = {
     northEast: { lat: 5, lng: 5 },
   },
 };
+
+/**
+ * A wide footprint, so a turn moves its corners onto positions the unturned
+ * box never occupies — a square would only swap corners with itself.
+ */
+const wideImage: MapImage = {
+  ...imageObject,
+  bounds: {
+    southWest: { lat: 1, lng: 1 },
+    northEast: { lat: 5, lng: 7 },
+  },
+};
+
+/** The wide footprint a quarter turn on. */
+const rotatedImage: MapImage = { ...wideImage, rotation: 90 };
 
 const defaultStyle: LayerStyle = {
   borderColor: '#3388ff',
@@ -286,11 +388,16 @@ describe('EditableImage', () => {
     resetLeafletCalls();
   });
 
-  it('renders an image overlay with the image url and title as alt text', () => {
-    render(<EditableImage obj={imageObject} {...sharedProps} isSelected={true} />);
+  it('renders the image url into the overlay', () => {
+    const { container } = render(
+      <EditableImage obj={imageObject} {...sharedProps} isSelected={true} />,
+    );
 
-    const img = screen.getByAltText('Survey photo');
-    expect(img).toHaveAttribute('src', imageObject.imageUrl);
+    expect(container.querySelector('image')).toHaveAttribute(
+      'href',
+      imageObject.imageUrl,
+    );
+    expect(screen.getByLabelText('Survey photo')).toBeInTheDocument();
   });
 
   it('translates bounds when the move handle is dragged', () => {
@@ -421,6 +528,336 @@ describe('EditableImage', () => {
         northEast: { lat: 5, lng: 6 },
       },
     });
+  });
+});
+
+describe('rotated image frame', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetLeafletCalls();
+  });
+
+  it('draws an image saved before rotation existed as an upright frame', () => {
+    const { container } = render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={false} />,
+    );
+
+    // User space is anchored on the frame centre (4, -3): the footprint
+    // spans lng 1..7 and lat 1..5, so its box starts at (-3, -2) relative
+    // to the centre, drawn with no turn about the origin.
+    expect(rasterTransform(container)).toBe('rotate(0 0 0)');
+    const raster = container.querySelector('image')!;
+    expect(raster).toHaveAttribute('x', '-3');
+    expect(raster).toHaveAttribute('y', '-2');
+    expect(raster).toHaveAttribute('width', '6');
+    expect(raster).toHaveAttribute('height', '4');
+    expectCloseNumbers(readViewBox(container), [-3, -2, 6, 4]);
+  });
+
+  it('turns the raster about the centre without rewriting the footprint', () => {
+    const { container } = render(
+      <EditableImage obj={rotatedImage} {...sharedProps} isSelected={false} />,
+    );
+
+    const raster = container.querySelector('image')!;
+    expect(rasterTransform(container)).toBe('rotate(90 0 0)');
+    // Same rect as upright: the angle is a drawing transform, not a crop.
+    expect(raster).toHaveAttribute('x', '-3');
+    expect(raster).toHaveAttribute('y', '-2');
+    expect(raster).toHaveAttribute('width', '6');
+    expect(raster).toHaveAttribute('height', '4');
+
+    // The frame now reaches lat 0..6 and lng 2..6: a quarter turn swaps the
+    // screen extents, so the overlay's box follows, still centre-anchored.
+    expectCloseNumbers(readViewBox(container), [-2, -3, 4, 6]);
+  });
+
+  it('re-derives the projected frame when the map pans or zooms', () => {
+    const { container } = render(
+      <EditableImage obj={rotatedImage} {...sharedProps} isSelected={false} />,
+    );
+
+    expect(leafletCalls.mapOn).toHaveBeenCalledWith(
+      'zoomend moveend',
+      expect.any(Function),
+    );
+
+    // One zoom level doubles the projected size of everything, and the frame
+    // scales with it, so the turn looks the same on screen.
+    leafletCalls.zoom = 14;
+    const [, reproject] = leafletCalls.mapOn.mock.calls[0] as [string, () => void];
+    act(() => reproject());
+
+    expect(rasterTransform(container)).toBe('rotate(90 0 0)');
+    expectCloseNumbers(readViewBox(container), [-4, -6, 8, 12]);
+  });
+
+  it('puts the selection frame and its handles on the rotated corners', () => {
+    render(<EditableImage obj={rotatedImage} {...sharedProps} isSelected={true} />);
+
+    const ring = JSON.parse(screen.getByTestId('polygon').dataset.positions!) as LatLngLiteral[];
+    // Walked around the frame: northwest, northeast, southeast, southwest.
+    expectClosePosition(ring[0], { lat: 6, lng: 6 });
+    expectClosePosition(ring[1], { lat: 0, lng: 6 });
+    expectClosePosition(ring[2], { lat: 0, lng: 2 });
+    expectClosePosition(ring[3], { lat: 6, lng: 2 });
+
+    expectClosePosition(
+      markerPosition(screen.getByLabelText('Resize image northeast corner')),
+      { lat: 0, lng: 6 },
+    );
+    // Turning is about the centre, so the move handle stays put.
+    expectClosePosition(markerPosition(screen.getByLabelText('Move image overlay')), {
+      lat: 3,
+      lng: 4,
+    });
+  });
+});
+
+describe('image rotation gesture', () => {
+  /** A press beyond the wide frame's east edge, inside the band, clear of the corner keep-out. */
+  const BAND_PRESS = { clientX: 20, clientY: 3 };
+  /** A pointer swung 26.57 degrees clockwise from that press. */
+  const TURN_MOVE = { clientX: 10, clientY: 0 };
+
+  const startRotationDrag = (shift = false) => {
+    fireEvent.mouseDown(screen.getByTestId('map-container'), {
+      ...BAND_PRESS,
+      button: 0,
+    });
+    fireEvent.mouseMove(document, { ...TURN_MOVE, shiftKey: shift });
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetLeafletCalls();
+  });
+
+  it('previews the angle and reads it out while dragged outside the frame', () => {
+    const onUpdate = vi.fn();
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} onUpdate={onUpdate} />,
+    );
+
+    startRotationDrag();
+
+    // Straight east of the centre (4, -3), then down to (10, 0): atan2(3, 6).
+    expect(screen.getByTestId('rotation-readout')).toHaveTextContent('26.6°');
+    expect(onUpdate).not.toHaveBeenCalled();
+    // The viewport holds still for the whole gesture.
+    expect(leafletCalls.draggingDisable).toHaveBeenCalledTimes(1);
+  });
+
+  it('snaps the readout to 15 degrees while Shift is held, even mid-drag', () => {
+    render(<EditableImage obj={wideImage} {...sharedProps} isSelected={true} />);
+
+    startRotationDrag();
+    expect(screen.getByTestId('rotation-readout')).toHaveTextContent('26.6°');
+
+    // Shift is read live, so it takes effect without restarting the gesture.
+    fireEvent.mouseMove(document, { ...TURN_MOVE, shiftKey: true });
+    expect(screen.getByTestId('rotation-readout')).toHaveTextContent('30.0°');
+
+    fireEvent.mouseMove(document, { ...TURN_MOVE, shiftKey: false });
+    expect(screen.getByTestId('rotation-readout')).toHaveTextContent('26.6°');
+  });
+
+  it('applies the angle once, when the pointer is released', () => {
+    const onUpdate = vi.fn();
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} onUpdate={onUpdate} />,
+    );
+
+    startRotationDrag(true);
+    fireEvent.mouseUp(document, { ...TURN_MOVE, shiftKey: true });
+
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    expect(onUpdate.mock.calls[0][0]).toBe('img-1');
+    expect(onUpdate.mock.calls[0][1]).toEqual({ rotation: 30 });
+    expect(screen.queryByTestId('rotation-readout')).not.toBeInTheDocument();
+    expect(leafletCalls.draggingEnable).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves the corner keep-out zone to the resize handles', () => {
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} onUpdate={vi.fn()} />,
+    );
+
+    // Projected (9, -2): inside the 24px band, but within 12px of the
+    // northeast corner (7, -1) where the resize handle lives. A press
+    // here must never turn into a rotation.
+    fireEvent.mouseDown(screen.getByTestId('map-container'), {
+      clientX: 9,
+      clientY: 2,
+      button: 0,
+    });
+    fireEvent.mouseMove(document, TURN_MOVE);
+
+    expect(screen.queryByTestId('rotation-readout')).not.toBeInTheDocument();
+  });
+
+  it('leaves a press that never drags to the map, so it can deselect', () => {
+    const onUpdate = vi.fn();
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} onUpdate={onUpdate} />,
+    );
+
+    fireEvent.mouseDown(screen.getByTestId('map-container'), {
+      ...BAND_PRESS,
+      button: 0,
+    });
+    fireEvent.mouseUp(document, BAND_PRESS);
+
+    expect(onUpdate).not.toHaveBeenCalled();
+    // Nothing was turned, so the click that follows must still reach the map.
+    expect(suppressTrailingClickSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps panning when the pointer is pressed far outside the band', () => {
+    render(<EditableImage obj={wideImage} {...sharedProps} isSelected={true} />);
+
+    // 93 projected units past the east edge, well beyond the band.
+    fireEvent.mouseDown(screen.getByTestId('map-container'), {
+      clientX: 100,
+      clientY: 3,
+      button: 0,
+    });
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 0 });
+
+    expect(screen.queryByTestId('rotation-readout')).not.toBeInTheDocument();
+    expect(leafletCalls.draggingDisable).not.toHaveBeenCalled();
+  });
+
+  it('ignores the gesture on an image that is not selected', () => {
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={false} onUpdate={vi.fn()} />,
+    );
+
+    startRotationDrag();
+
+    expect(screen.queryByTestId('rotation-readout')).not.toBeInTheDocument();
+  });
+
+  it('shows the rotation cursor over the band outside the frame', () => {
+    render(<EditableImage obj={wideImage} {...sharedProps} isSelected={true} />);
+    const container = screen.getByTestId('map-container');
+
+    fireEvent.mouseMove(container, BAND_PRESS);
+    expect(container.style.cursor).toBe(ROTATION_CURSOR);
+  });
+
+  it('keeps the normal cursor inside the frame and beyond the band', () => {
+    const { rerender } = render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} />,
+    );
+    const container = screen.getByTestId('map-container');
+
+    // Inside the frame: the centre, projected (4, -3) at zoom 13.
+    fireEvent.mouseMove(container, { clientX: 4, clientY: 3 });
+    expect(container.style.cursor).toBe('');
+
+    // Far outside the band.
+    fireEvent.mouseMove(container, { clientX: 100, clientY: 3 });
+    expect(container.style.cursor).toBe('');
+
+    fireEvent.mouseMove(container, BAND_PRESS);
+    expect(container.style.cursor).toBe(ROTATION_CURSOR);
+
+    // Leaving the map hands the cursor back too.
+    fireEvent.mouseLeave(container);
+    expect(container.style.cursor).toBe('');
+
+    // And deselecting does.
+    fireEvent.mouseMove(container, BAND_PRESS);
+    expect(container.style.cursor).toBe(ROTATION_CURSOR);
+    rerender(<EditableImage obj={wideImage} {...sharedProps} isSelected={false} />);
+    expect(container.style.cursor).toBe('');
+  });
+
+  it('does not offer the rotation cursor on an unselected image', () => {
+    render(<EditableImage obj={wideImage} {...sharedProps} isSelected={false} />);
+    const container = screen.getByTestId('map-container');
+
+    fireEvent.mouseMove(container, BAND_PRESS);
+    expect(container.style.cursor).toBe('');
+  });
+
+  it('holds the rotation cursor from press to release during the drag', () => {
+    const onUpdate = vi.fn();
+    render(
+      <EditableImage obj={wideImage} {...sharedProps} isSelected={true} onUpdate={onUpdate} />,
+    );
+    const container = screen.getByTestId('map-container');
+
+    fireEvent.mouseDown(container, { ...BAND_PRESS, button: 0 });
+    // Far outside the previewing frame's band mid-drag: the cursor still
+    // says the gesture in progress is a rotation.
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 0 });
+    expect(container.style.cursor).toBe(ROTATION_CURSOR);
+
+    fireEvent.mouseUp(document, { clientX: 100, clientY: 0 });
+    expect(container.style.cursor).toBe('');
+  });
+});
+
+describe('move and resize with a nonzero rotation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetLeafletCalls();
+  });
+
+  it('keeps the turn while the image moves and welds handles to the frame', () => {
+    const onUpdate = vi.fn();
+    const { container } = render(
+      <EditableImage obj={rotatedImage} {...sharedProps} isSelected={true} onUpdate={onUpdate} />,
+    );
+
+    // One lng east: the footprint shifts, the angle is not part of the move.
+    fireEvent.drag(screen.getByLabelText('Move image overlay'), {
+      target: markerAt({ lat: 3, lng: 5 }),
+    });
+
+    expect(rasterTransform(container)).toBe('rotate(90 0 0)');
+    // The corners the handles were pushed to are the turned box of the moved
+    // footprint, not the moved box of the upright footprint.
+    const pushed = leafletCalls.setLatLng.map((call) => call.position);
+    expectClosePosition(pushed.at(-4)!, { lat: 6, lng: 7 }); // north-west
+    expectClosePosition(pushed.at(-3)!, { lat: 0, lng: 7 }); // north-east
+    expectClosePosition(pushed.at(-2)!, { lat: 6, lng: 3 }); // south-west
+    expectClosePosition(pushed.at(-1)!, { lat: 0, lng: 3 }); // south-east
+
+    fireEvent.dragEnd(screen.getByLabelText('Move image overlay'), {
+      target: markerAt({ lat: 3, lng: 5 }),
+    });
+
+    expect(onUpdate).toHaveBeenCalledWith('img-1', {
+      bounds: { southWest: { lat: 1, lng: 2 }, northEast: { lat: 5, lng: 8 } },
+    });
+  });
+
+  it('resizes around the rotated frame and persists only the footprint', () => {
+    const onUpdate = vi.fn();
+    const { container } = render(
+      <EditableImage
+        obj={rotatedImage}
+        {...sharedProps}
+        geometryEditMode="resize"
+        isSelected={true}
+        onUpdate={onUpdate}
+      />,
+    );
+
+    // Doubled along the frame's own axes from the anchored southeast corner:
+    // the turned northeast corner reaches (10, 6) in projected units.
+    dragCornerHandle('Resize image northeast corner', { lat: -6, lng: 10 });
+
+    expect(readTransform(container).angle).toBeCloseTo(90, 6);
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    const updates = onUpdate.mock.calls[0][1] as Partial<MapImage>;
+    // The angle survives untouched: only the footprint is written.
+    expect(Object.keys(updates)).toEqual(['bounds']);
+    expectClosePosition(updates.bounds!.southWest, { lat: -4, lng: 0 });
+    expectClosePosition(updates.bounds!.northEast, { lat: 4, lng: 12 });
   });
 });
 

@@ -52,6 +52,12 @@ export interface MapImage extends BaseMapObject {
   fileName: string;
   contentType: string;
   bounds: MapImageBounds;
+  /**
+   * Degrees the image is turned clockwise about its centre, measured in the
+   * map's projected plane. Absent means upright, so images saved before
+   * rotation existed load unturned.
+   */
+  rotation?: number;
 }
 
 export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon | MapImage;
