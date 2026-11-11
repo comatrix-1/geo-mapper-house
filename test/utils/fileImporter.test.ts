@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Layer, MapImage } from '../../src/types';
-import { loadProjectFromFile } from '../../src/utils/fileImporter';
+import type { Layer, MapImage, MapObject } from '../../src/types';
+import { importFile, loadProjectFromFile } from '../../src/utils/fileImporter';
 
 // `saveProjectToFile` serializes layers+objects as a versioned JSON blob;
 // `loadProjectFromFile` parses that same shape back. This round-trip test
@@ -37,6 +37,44 @@ describe('project JSON round trip', () => {
 
     expect(result.objects).toEqual([imageObject]);
     expect(result.objects[0]).toMatchObject(imageObject);
+  });
+
+  it('retains an adjusted image opacity on project load', async () => {
+    const adjusted: MapImage = { ...imageObject, opacity: 0.4 };
+    const result = await loadProjectFromFile(projectFileWith([adjusted]));
+
+    expect(result.objects).toEqual([adjusted]);
+    expect(result.objects[0]).toMatchObject({ opacity: 0.4 });
+  });
+
+  it('retains an adjusted image opacity through project import', async () => {
+    const adjusted: MapImage = { ...imageObject, opacity: 0.25 };
+    const content = JSON.stringify({
+      version: '1.0',
+      timestamp: Date.now(),
+      layers: [],
+      objects: [adjusted],
+    });
+    const file = projectFileWith([adjusted]);
+    // jsdom's File lacks `text()`; `importFile` reads via that method.
+    Object.defineProperty(file, 'text', {
+      value: () => Promise.resolve(content),
+    });
+    const result = await importFile(file);
+
+    expect(result.objects).toEqual([adjusted]);
+    expect(result.objects[0]).toMatchObject({ opacity: 0.25 });
+  });
+
+  it('loads a legacy image without opacity unchanged, leaving the full-opacity fallback to the renderer', async () => {
+    const result = await loadProjectFromFile(projectFileWith([imageObject]));
+
+    // `imageObject` has no `opacity`, like images saved before the field
+    // existed. The loader must not invent a value: the overlay falls back
+    // to 1 at render time.
+    expect(imageObject).not.toHaveProperty('opacity');
+    expect(result.objects[0]).toEqual(imageObject);
+    expect(result.objects[0]).not.toHaveProperty('opacity');
   });
 
   it('round trips an image alongside other object types', async () => {

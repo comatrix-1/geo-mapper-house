@@ -14,7 +14,7 @@ const PX_PER_METER = (256 * 2 ** 13) / 40075016.68557849;
 const mapMock = vi.hoisted(() => ({
   on: vi.fn(),
   off: vi.fn(),
-  getContainer: vi.fn(),
+  getContainer: vi.fn(() => document.createElement('div')),
   panTo: vi.fn(),
   flyTo: vi.fn(),
   setView: vi.fn(),
@@ -50,7 +50,7 @@ vi.mock('react-leaflet', () => ({
   Polyline: () => null,
   Polygon: () => null,
   Marker: () => null,
-  ImageOverlay: () => null,
+  SVGOverlay: () => null,
   Tooltip: ({ children }: { children?: React.ReactNode }) =>
     React.createElement('div', null, children),
   // Shapes render as a clickable div so map clicks can be driven.

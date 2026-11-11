@@ -1,14 +1,14 @@
-import { useMemo, useRef, type MutableRefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import {
   Marker,
   Circle,
   Polyline,
   Polygon,
-  ImageOverlay,
+  SVGOverlay,
   useMap,
 } from "react-leaflet";
 import Leaflet from "leaflet";
-import type { LatLngLiteral, LatLngTuple, LeafletMouseEvent } from "leaflet";
+import type { LatLngLiteral, LeafletMouseEvent } from "leaflet";
 import type {
   GeometryEditMode,
   MapCircle,
@@ -26,8 +26,6 @@ import { suppressTrailingClick } from "../utils/suppressTrailingClick";
 import {
   IMAGE_CORNERS,
   getImageCenter,
-  getImageCornerPositions,
-  resizeImageBounds,
   translateImageBounds,
   type ImageCorner,
 } from "../utils/imageOverlay";
@@ -35,10 +33,23 @@ import {
   cornerPoint,
   metersToPixels,
   resizeCircle,
-  resizeLatLngBounds,
   resizeLatLngVertices,
+  type Proj,
   type ResizeMap,
 } from "../utils/geometryResize";
+import {
+  FRAME_CORNER_RING,
+  formatRotation,
+  getProjectedFrame,
+  getRotatedCornerLatLngs,
+  getRotatedOverlayGeometry,
+  isNearFrameCorner,
+  isWithinRotationBand,
+  resizeRotatedImageBounds,
+  rotationFromPointer,
+  snapRotation,
+  type RotatedOverlayGeometry,
+} from "../utils/imageRotation";
 import {
   createMarkerIcon,
   createMoveHandleIcon,
@@ -149,12 +160,22 @@ const beginHandleDrag = (
   // Keep the viewport stationary for the whole gesture.
   map.dragging?.disable?.();
 
-  const handleMove = (ev: MouseEvent) => onMove(map.mouseEventToLatLng(ev), ev.shiftKey);
-  const handleUp = (ev: MouseEvent) => {
+  // The last seen pointer state, so a drag that ends without a mouseup can
+  // still commit where it was last seen.
+  let lastLatLng = map.mouseEventToLatLng(domEvent);
+  let lastShift = false;
+  // A mouseup and a blur can both reach one drag; finish it exactly once.
+  let ended = false;
+
+  const finish = (latlng: LatLngLiteral, shift: boolean) => {
+    if (ended) return;
+    ended = true;
     document.removeEventListener("mousemove", handleMove);
     document.removeEventListener("mouseup", handleUp);
+    document.removeEventListener("mouseleave", onAbandon);
+    window.removeEventListener("blur", onAbandon);
     map.dragging?.enable?.();
-    onEnd(map.mouseEventToLatLng(ev), ev.shiftKey);
+    onEnd(latlng, shift);
     // The pointer is rarely back on the handle icon when the drag ends, so
     // the browser fires the trailing click on the map container and Leaflet's
     // own drag guard never sees the dragged layer. Eat that click so the map
@@ -162,8 +183,22 @@ const beginHandleDrag = (
     suppressTrailingClick();
   };
 
+  const handleMove = (ev: MouseEvent) => {
+    lastLatLng = map.mouseEventToLatLng(ev);
+    lastShift = ev.shiftKey;
+    onMove(lastLatLng, lastShift);
+  };
+  const handleUp = (ev: MouseEvent) =>
+    finish(map.mouseEventToLatLng(ev), ev.shiftKey);
+  // Releasing outside the window fires no mouseup: finish on blur or the
+  // pointer leaving the document, or the map would stay frozen with the
+  // drag still armed (and leaks the trailing-click suppression).
+  const onAbandon = () => finish(lastLatLng, lastShift);
+
   document.addEventListener("mousemove", handleMove);
   document.addEventListener("mouseup", handleUp);
+  document.addEventListener("mouseleave", onAbandon);
+  window.addEventListener("blur", onAbandon);
 };
 
 interface CornerResizeHandlesProps {
@@ -750,6 +785,38 @@ export const EditablePolygon = ({
   );
 };
 
+/** The SVG turn that places the drawn image into its rotated frame. */
+const rotateTransform = (geometry: RotatedOverlayGeometry): string =>
+  `rotate(${geometry.angleDeg} ${geometry.pivot.x} ${geometry.pivot.y})`;
+
+/**
+ * Paints a frame the component has not committed yet — a move, resize or
+ * rotation preview. react-leaflet applies an overlay's `attributes` only when
+ * it creates the element, so the user space and the image rect are written
+ * directly while the gesture is live.
+ */
+const paintPreviewFrame = (
+  overlayElement: Element | null | undefined,
+  raster: SVGImageElement | null,
+  geometry: RotatedOverlayGeometry,
+): void => {
+  overlayElement?.setAttribute("viewBox", geometry.viewBox);
+  if (!raster) return;
+  raster.setAttribute("x", String(geometry.image.x));
+  raster.setAttribute("y", String(geometry.image.y));
+  raster.setAttribute("width", String(geometry.image.width));
+  raster.setAttribute("height", String(geometry.image.height));
+  raster.setAttribute("transform", rotateTransform(geometry));
+};
+
+/**
+ * Cursor shown over the area just outside a selected image's frame, where a
+ * rotation drag begins: circular arrows, so rotatability is discoverable
+ * before the first drag. Written to the map container like `MapBoard`'s
+ * drawing cursor; clearing it restores Leaflet's own cursor.
+ */
+export const ROTATION_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'/%3E%3Cpath d='M21 3v5h-5'/%3E%3C/svg%3E") 12 12, grab`;
+
 export const EditableImage = ({
   obj,
   isSelected,
@@ -760,48 +827,90 @@ export const EditableImage = ({
 }: EditableObjectProps) => {
   const image = obj as MapImage;
   const map = useMap();
+  const resizeMap = useMemo(() => toResizeMap(map), [map]);
   const { bounds } = image;
+
+  /** The angle the rotation gesture is previewing; null when idle. */
+  const [previewRotation, setPreviewRotation] = useState<number | null>(null);
+  const rotation = previewRotation ?? image.rotation ?? 0;
 
   // Live handles into Leaflet so a drag can move the overlay in real time.
   // The committed bounds only flow back through props on drag end.
-  const overlayRef = useRef<Leaflet.ImageOverlay | null>(null);
+  const overlayRef = useRef<Leaflet.SVGOverlay | null>(null);
+  const rasterRef = useRef<SVGImageElement | null>(null);
+  const frameRef = useRef<Leaflet.Polygon | null>(null);
   const centerHandleRef = useRef<Leaflet.Marker | null>(null);
   // Corner markers for the independent (vertex-mode) native drag.
   const cornerRefs = useRef<(Leaflet.Marker | null)[]>([]);
   // Corner markers for the aspect-locked (resize-mode) custom drag.
   const resizeCornerRefs = useRef<(Leaflet.Marker | null)[]>([]);
+  // Mirrors the preview angle for the release handler, which commits without
+  // waiting for another render.
+  const previewRef = useRef<number | null>(null);
+  // Tears down a gesture the component never got to finish, because a
+  // re-render replaces the press handler while the pointer is still down.
+  const endGestureRef = useRef<(() => void) | null>(null);
+  useEffect(() => () => endGestureRef.current?.(), []);
 
-  // Derive the handle positions from the committed bounds. They are memoised on
-  // the coordinate values so react-leaflet does not snap the handles back to
-  // the committed bounds while a drag is in progress.
+  // Derive the frame from the committed bounds. They are memoised on the
+  // coordinate values so react-leaflet does not snap the handles back to the
+  // committed bounds while a drag is in progress.
   const { lat: swLat, lng: swLng } = bounds.southWest;
   const { lat: neLat, lng: neLng } = bounds.northEast;
-  const { center, cornerPositions, overlayBounds } = useMemo(() => {
+
+  // Rotation is stored as an angle but drawn in the projected plane, so the
+  // corners are re-derived whenever the view changes.
+  const [viewVersion, setViewVersion] = useState(0);
+  useEffect(() => {
+    const reproject = () => setViewVersion((version) => version + 1);
+    map.on("zoomend moveend", reproject);
+    return () => {
+      map.off("zoomend moveend", reproject);
+    };
+  }, [map]);
+
+  const { center, corners, frame, overlay } = useMemo(() => {
     const current: MapImageBounds = {
       southWest: { lat: swLat, lng: swLng },
       northEast: { lat: neLat, lng: neLng },
     };
-    const corners = getImageCornerPositions(current);
     return {
       center: getImageCenter(current),
-      cornerPositions: corners,
-      overlayBounds: [
-        [swLat, swLng],
-        [neLat, neLng],
-      ] as LatLngTuple[],
+      corners: getRotatedCornerLatLngs(resizeMap, current, rotation),
+      frame: getProjectedFrame(resizeMap, current, rotation),
+      overlay: getRotatedOverlayGeometry(resizeMap, current, rotation),
     };
-  }, [swLat, swLng, neLat, neLng]);
+    // `viewVersion` is not read here: it is the bump from the pan/zoom
+    // subscription above, because the projection the frame is derived from
+    // changes under the same values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resizeMap, swLat, swLng, neLat, neLng, rotation, viewVersion]);
 
-  /** Moves the overlay and its handles to the given bounds. */
+  const overlayBounds = useMemo(
+    () =>
+      new Leaflet.LatLngBounds(overlay.bounds.southWest, overlay.bounds.northEast),
+    [overlay],
+  );
+
+  // The SVG's user space travels with the frame, and react-leaflet leaves
+  // `attributes` alone once the element exists.
+  useEffect(() => {
+    overlayRef.current?.getElement()?.setAttribute("viewBox", overlay.viewBox);
+  }, [overlay]);
+
+  /** Moves the overlay, its frame and every handle onto the given bounds. */
   const applyLiveBounds = (
     next: MapImageBounds,
     options: { skipCorner?: ImageCorner; skipCenter?: boolean } = {},
   ) => {
+    const geometry = getRotatedOverlayGeometry(resizeMap, next, rotation);
     overlayRef.current?.setBounds(
-      new Leaflet.LatLngBounds(next.southWest, next.northEast),
+      new Leaflet.LatLngBounds(geometry.bounds.southWest, geometry.bounds.northEast),
     );
+    paintPreviewFrame(overlayRef.current?.getElement(), rasterRef.current, geometry);
 
-    const nextCorners = getImageCornerPositions(next);
+    const nextCorners = getRotatedCornerLatLngs(resizeMap, next, rotation);
+    frameRef.current?.setLatLngs(FRAME_CORNER_RING.map((corner) => nextCorners[corner]));
     IMAGE_CORNERS.forEach((corner, index) => {
       // The handle the user is dragging is already under the cursor.
       if (corner === options.skipCorner) return;
@@ -832,19 +941,28 @@ export const EditableImage = ({
     onUpdate(image.id, { bounds: translateImageBounds(bounds, delta) });
   };
 
+  // Vertex mode: a corner moves independently, along the frame's own axes.
   const onCornerDrag =
     (corner: ImageCorner) =>
     (e: DragEvent) => {
-      applyLiveBounds(resizeImageBounds(bounds, corner, e.target.getLatLng()), {
-        skipCorner: corner,
-      });
+      applyLiveBounds(
+        resizeRotatedImageBounds(resizeMap, bounds, rotation, corner, e.target.getLatLng(), false),
+        { skipCorner: corner },
+      );
     };
 
   const onCornerDragEnd =
     (corner: ImageCorner) =>
     (e: DragEvent) => {
       onUpdate(image.id, {
-        bounds: resizeImageBounds(bounds, corner, e.target.getLatLng()),
+        bounds: resizeRotatedImageBounds(
+          resizeMap,
+          bounds,
+          rotation,
+          corner,
+          e.target.getLatLng(),
+          false,
+        ),
       });
     };
 
@@ -855,24 +973,149 @@ export const EditableImage = ({
     aspectLocked: boolean,
     commit: boolean,
   ): CornerPositions => {
-    const next = resizeLatLngBounds(toResizeMap(map), bounds, corner, latlng, aspectLocked);
-    overlayRef.current?.setBounds(
-      new Leaflet.LatLngBounds(next.southWest, next.northEast),
-    );
-    centerHandleRef.current?.setLatLng(getImageCenter(next));
-    const nextCorners = getImageCornerPositions(next);
+    const next = resizeRotatedImageBounds(resizeMap, bounds, rotation, corner, latlng, aspectLocked);
+    applyLiveBounds(next);
     if (commit) onUpdate(image.id, { bounds: next });
-    return nextCorners;
+    return getRotatedCornerLatLngs(resizeMap, next, rotation);
   };
+
+  // Hand the map cursor back when this image stops being the selected,
+  // rotatable one (deselect, drawing mode, unmount). Keyed on selection and
+  // interactivity only: the gesture effect below re-subscribes whenever the
+  // previewing frame changes, and a cleanup that ran there would clear the
+  // cursor mid-drag. `map` is deliberately omitted — only the container
+  // node matters, and it is stable across renders.
+  /* eslint-disable react-hooks/exhaustive-deps -- `map.getContainer()` is a
+     stable node; only the selection/interactivity transition matters. */
+  useEffect(() => () => {
+    map.getContainer().style.cursor = "";
+  }, [isSelected, interactive]);
+  /* eslint-enable react-hooks/exhaustive-deps */
+
+  /**
+   * Rotation gesture: pressing just outside the selected frame turns the image
+   * about its centre. The angle is previewed live and only persisted when the
+   * pointer is released after an actual drag, so a plain click in the band
+   * still reaches the map and clears the selection as it always did.
+   *
+   * Hovering the band shows a rotation cursor so the affordance is
+   * discoverable before the first drag; the map's own cursor resumes
+   * everywhere else.
+   */
+  useEffect(() => {
+    if (!isSelected || !interactive) return;
+
+    const container = map.getContainer();
+    // Clearing the inline cursor hands the pointer back to Leaflet's own
+    // grab cursor, the same way `MapBoard`'s drawing cursor is cleared.
+    const showRotationCursor = (show: boolean) => {
+      container.style.cursor = show ? ROTATION_CURSOR : "";
+    };
+
+    // The grab zone is the band outside the frame, minus the keep-out around
+    // each corner where a press belongs to the resize handle. Hover inside
+    // the frame, beyond the band, or in the corner zone keeps the map's
+    // own cursor.
+    const inRotationGrabZone = (point: Proj) =>
+      isWithinRotationBand(point, frame) &&
+      !isNearFrameCorner(point, frame.corners);
+
+    const trackRotationHover = (domEvent: MouseEvent) => {
+      const point = map.project(map.mouseEventToLatLng(domEvent), map.getZoom());
+      showRotationCursor(inRotationGrabZone(point));
+    };
+    const clearRotationHover = () => showRotationCursor(false);
+
+    const beginRotation = (domEvent: MouseEvent) => {
+      if (domEvent.button !== 0) return;
+      const startPoint = map.project(map.mouseEventToLatLng(domEvent), map.getZoom());
+      if (!inRotationGrabZone(startPoint)) return;
+
+      Leaflet.DomEvent.stop(domEvent);
+      // Keep the viewport still for the whole gesture.
+      map.dragging?.disable?.();
+      // The band travels with the previewing frame during the drag, so hold
+      // the rotation cursor from press to release rather than letting hover
+      // tracking move it off the moving band.
+      showRotationCursor(true);
+
+      const pivot = frame.center;
+      const startAngle = rotation;
+      let dragged = false;
+      // A mouseup and a blur can both reach one gesture (release outside
+      // the window, then alt-tab back); end it exactly once.
+      let ended = false;
+
+      const onMove = (ev: MouseEvent) => {
+        const point = map.project(map.mouseEventToLatLng(ev), map.getZoom());
+        const turned = snapRotation(
+          rotationFromPointer(pivot, startPoint, point, startAngle),
+          ev.shiftKey,
+        );
+        dragged = true;
+        previewRef.current = turned;
+        setPreviewRotation(turned);
+      };
+
+      // Releasing commits the turn; the unmount teardown only abandons it, so
+      // an interrupted gesture never leaves listeners behind on the document.
+      const endGesture = (commit: boolean) => {
+        if (ended) return;
+        ended = true;
+        document.removeEventListener("mousemove", onMove);
+        document.removeEventListener("mouseup", onUp);
+        document.removeEventListener("mouseleave", onAbandon);
+        window.removeEventListener("blur", onAbandon);
+        endGestureRef.current = null;
+        map.dragging?.enable?.();
+        // Hover tracking takes over again on the next pointer move.
+        showRotationCursor(false);
+
+        const finalAngle = previewRef.current;
+        previewRef.current = null;
+        setPreviewRotation(null);
+        if (commit && dragged && finalAngle !== null) {
+          onUpdate(image.id, { rotation: finalAngle });
+          suppressTrailingClick();
+        }
+      };
+
+      const onUp = () => endGesture(true);
+      // Releasing outside the window fires no mouseup: end on blur or the
+      // pointer leaving the document, or the drag stays armed and every
+      // later pointer move would keep rotating the image.
+      const onAbandon = () => endGesture(true);
+
+      endGestureRef.current = () => endGesture(false);
+
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+      document.addEventListener("mouseleave", onAbandon);
+      window.addEventListener("blur", onAbandon);
+    };
+
+    container.addEventListener("mousedown", beginRotation);
+    container.addEventListener("mousemove", trackRotationHover);
+    container.addEventListener("mouseleave", clearRotationHover);
+    return () => {
+      container.removeEventListener("mousedown", beginRotation);
+      container.removeEventListener("mousemove", trackRotationHover);
+      container.removeEventListener("mouseleave", clearRotationHover);
+    };
+  }, [map, isSelected, interactive, frame, rotation, image.id, onUpdate]);
 
   return (
     <>
-      <ImageOverlay
+      <SVGOverlay
         ref={overlayRef}
         bounds={overlayBounds}
-        url={image.imageUrl}
-        alt={image.title || 'Map image'}
-        opacity={1}
+        attributes={{
+          viewBox: overlay.viewBox,
+          preserveAspectRatio: "none",
+          role: "img",
+          "aria-label": image.title || "Map image",
+        }}
+        opacity={image.opacity ?? 1}
         interactive={interactive}
         // Don't let object clicks bubble to the map: the map click handler
         // clears the selection, which would immediately undo the selection
@@ -883,9 +1126,28 @@ export const EditableImage = ({
             if (interactive) onSelect(image.id);
           },
         }}
-      />
+      >
+        <image
+          ref={rasterRef}
+          href={image.imageUrl}
+          x={overlay.image.x}
+          y={overlay.image.y}
+          width={overlay.image.width}
+          height={overlay.image.height}
+          preserveAspectRatio="none"
+          transform={rotateTransform(overlay)}
+        />
+      </SVGOverlay>
       {isSelected && (
         <>
+          {/* The outline the handles and the rotation band are measured from. */}
+          <Polygon
+            ref={frameRef}
+            positions={FRAME_CORNER_RING.map((corner) => corners[corner])}
+            pathOptions={{ color: "#111827", weight: 1, dashArray: "4, 4", fill: false }}
+            interactive={false}
+            bubblingMouseEvents={false}
+          />
           <Marker
             ref={centerHandleRef}
             position={center}
@@ -903,7 +1165,7 @@ export const EditableImage = ({
           />
           {geometryEditMode === "resize" ? (
             <CornerResizeHandles
-              corners={cornerPositions}
+              corners={corners}
               handleRefs={resizeCornerRefs}
               titles={IMAGE_CORNER_TITLES}
               onCornerMove={(corner, latlng, locked) => applyResize(corner, latlng, locked, false)}
@@ -916,7 +1178,7 @@ export const EditableImage = ({
                 ref={(marker) => {
                   cornerRefs.current[index] = marker;
                 }}
-                position={cornerPositions[corner]}
+                position={corners[corner]}
                 // Vertex mode moves a corner freely, unlike the
                 // direction-locked resize handles.
                 icon={createVertexIcon('move')}
@@ -934,6 +1196,14 @@ export const EditableImage = ({
             ))
           )}
         </>
+      )}
+      {previewRotation !== null && (
+        <div
+          data-testid="rotation-readout"
+          className="absolute left-1/2 top-3 z-[500] -translate-x-1/2 rounded bg-gray-900/90 px-2 py-1 text-xs font-medium text-white shadow-lg"
+        >
+          {formatRotation(previewRotation)}
+        </div>
       )}
     </>
   );

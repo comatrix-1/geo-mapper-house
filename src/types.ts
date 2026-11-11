@@ -52,6 +52,18 @@ export interface MapImage extends BaseMapObject {
   fileName: string;
   contentType: string;
   bounds: MapImageBounds;
+  /**
+   * Degrees the image is turned clockwise about its centre, measured in the
+   * map's projected plane. Absent means upright, so images saved before
+   * rotation existed load unturned.
+   */
+  rotation?: number;
+  /**
+   * Normalized raster opacity (`0` fully transparent to `1` fully opaque).
+   * Absent means fully opaque, so images saved before opacity existed load
+   * at full opacity.
+   */
+  opacity?: number;
 }
 
 export type MapObject = MapPoint | MapCircle | MapPolyline | MapPolygon | MapImage;
