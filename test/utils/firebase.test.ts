@@ -53,7 +53,14 @@ vi.mock('@supabase/supabase-js', () => ({
 // Import the module under test (after mocks are in place). The storage helpers
 // are re-exported from firebase.ts for call-site stability; they delegate to
 // the Supabase client mocked above.
-import { uploadMapImage, deleteMapImage } from '../../src/utils/firebase';
+import {
+  uploadMapImage,
+  deleteMapImage,
+  saveObject,
+  loadUserData,
+} from '../../src/utils/firebase';
+import type { MapImage } from '../../src/types';
+import { doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
 
 const pngFile = new File(['x'], 'map.png', { type: 'image/png' });
 const storagePath = 'users/u1/mapImages/o1/map.png';
@@ -85,5 +92,85 @@ describe('Supabase Storage helpers (re-exported from firebase.ts)', () => {
   it('deletes an image from storage', async () => {
     await deleteMapImage('map-images', storagePath);
     expect(supabaseStorage.remove).toHaveBeenCalledWith([storagePath]);
+  });
+});
+
+const imageWithOpacity: MapImage = {
+  id: 'img-1',
+  layerId: 'layer-1',
+  type: 'image',
+  title: 'Survey photo',
+  description: '',
+  imageUrl: 'https://download.example/photo.png',
+  fileName: 'photo.png',
+  contentType: 'image/png',
+  bounds: {
+    southWest: { lat: 1, lng: 2 },
+    northEast: { lat: 5, lng: 6 },
+  },
+  opacity: 0.4,
+};
+
+const legacyImage: MapImage = {
+  id: 'img-legacy',
+  layerId: 'layer-1',
+  type: 'image',
+  title: 'Legacy photo',
+  description: '',
+  imageUrl: 'https://download.example/legacy.png',
+  fileName: 'legacy.png',
+  contentType: 'image/png',
+  bounds: {
+    southWest: { lat: 0, lng: 0 },
+    northEast: { lat: 4, lng: 4 },
+  },
+};
+
+describe('image opacity persistence', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(doc).mockReturnValue('mock-doc-ref' as never);
+    vi.mocked(setDoc).mockResolvedValue(undefined as never);
+  });
+
+  it('saves an image with its opacity', async () => {
+    await saveObject('u1', imageWithOpacity);
+
+    expect(setDoc).toHaveBeenCalledWith('mock-doc-ref', imageWithOpacity);
+    expect(setDoc).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ id: 'img-1', opacity: 0.4 }),
+    );
+  });
+
+  it('restores a saved image at its saved opacity', async () => {
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => false,
+      data: () => ({}),
+    } as never);
+    vi.mocked(getDocs).mockResolvedValue({
+      docs: [{ data: () => imageWithOpacity }],
+    } as never);
+
+    const { objects } = await loadUserData('u1');
+
+    expect(objects).toEqual([imageWithOpacity]);
+    expect(objects[0]).toMatchObject({ opacity: 0.4 });
+  });
+
+  it('loads a legacy image without opacity unchanged, leaving the full-opacity fallback to the renderer', async () => {
+    expect(legacyImage).not.toHaveProperty('opacity');
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => false,
+      data: () => ({}),
+    } as never);
+    vi.mocked(getDocs).mockResolvedValue({
+      docs: [{ data: () => legacyImage }],
+    } as never);
+
+    const { objects } = await loadUserData('u1');
+
+    expect(objects).toEqual([legacyImage]);
+    expect(objects[0]).not.toHaveProperty('opacity');
   });
 });

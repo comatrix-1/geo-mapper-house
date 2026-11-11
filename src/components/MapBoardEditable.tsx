@@ -1115,7 +1115,7 @@ export const EditableImage = ({
           role: "img",
           "aria-label": image.title || "Map image",
         }}
-        opacity={1}
+        opacity={image.opacity ?? 1}
         interactive={interactive}
         // Don't let object clicks bubble to the map: the map click handler
         // clears the selection, which would immediately undo the selection

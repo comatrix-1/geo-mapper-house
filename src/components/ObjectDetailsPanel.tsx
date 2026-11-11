@@ -2,6 +2,7 @@ import { useState } from "react"
 import type {
   GeometryEditMode,
   MapCircle,
+  MapImage,
   MapObject,
   MapPoint,
   MapPolygon,
@@ -198,6 +199,42 @@ const ObjectEditExtras = ({
                 onUpdate(circle.id, { radius: val })
               }
             }}
+          />
+        </div>
+      )
+    }
+    case "image": {
+      const image = obj as MapImage
+      // The stored value is normalized (0–1); the slider works in percent
+      // points, matching the fill-opacity pattern elsewhere. An absent
+      // value means fully opaque, so the control starts at 100%.
+      const percent = Math.round((image.opacity ?? 1) * 100)
+      return (
+        <div>
+          <div className="flex justify-between mb-1">
+            <label
+              htmlFor="image-opacity-input"
+              className="text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider"
+            >
+              Opacity
+            </label>
+            <span className="text-xs text-sidebar-foreground/80">
+              {percent}%
+            </span>
+          </div>
+          <input
+            id="image-opacity-input"
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value={percent}
+            onChange={(e) =>
+              onUpdate(image.id, {
+                opacity: Number.parseInt(e.target.value) / 100,
+              })
+            }
+            className="w-full h-1.5 bg-sidebar-accent rounded-lg appearance-none cursor-pointer"
           />
         </div>
       )

@@ -172,10 +172,12 @@ vi.mock('react-leaflet', () => {
           attributes,
           children,
           eventHandlers,
+          opacity,
         }: {
           attributes?: Record<string, string>;
           children?: React.ReactNode;
           eventHandlers?: Record<string, DragEndHandler>;
+          opacity?: number;
         },
         ref: React.Ref<unknown>,
       ) => {
@@ -193,6 +195,8 @@ vi.mock('react-leaflet', () => {
           {
             'data-testid': 'image-overlay',
             className: 'image-overlay',
+            // The raster opacity the overlay was asked to draw at.
+            'data-opacity': String(opacity ?? 1),
             ...convertEventHandlers(eventHandlers),
           },
           React.createElement('svg', { ref: svgRef, ...attributes }, children),
@@ -398,6 +402,35 @@ describe('EditableImage', () => {
       imageObject.imageUrl,
     );
     expect(screen.getByLabelText('Survey photo')).toBeInTheDocument();
+  });
+
+  it('renders the raster at the stored opacity', () => {
+    render(
+      <EditableImage
+        obj={{ ...imageObject, opacity: 0.35 }}
+        {...sharedProps}
+        isSelected={false}
+      />,
+    );
+
+    expect(screen.getByTestId('image-overlay')).toHaveAttribute(
+      'data-opacity',
+      '0.35',
+    );
+  });
+
+  it('treats an image saved without opacity as fully opaque', () => {
+    render(
+      <EditableImage obj={imageObject} {...sharedProps} isSelected={false} />,
+    );
+
+    // `imageObject` carries no opacity, like every image saved before the
+    // field existed: the overlay must fall back to 1 rather than fade.
+    expect(imageObject).not.toHaveProperty('opacity');
+    expect(screen.getByTestId('image-overlay')).toHaveAttribute(
+      'data-opacity',
+      '1',
+    );
   });
 
   it('translates bounds when the move handle is dragged', () => {
