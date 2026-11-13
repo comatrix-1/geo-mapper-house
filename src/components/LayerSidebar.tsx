@@ -383,7 +383,7 @@ const LayerSidebar = ({
       <SidebarHeader><SidebarTrigger /></SidebarHeader>
 
       <SidebarContent className="group-data-[collapsible=icon]:hidden grid grid-rows-2">
-        <SidebarGroup>
+        <SidebarGroup className="min-h-0 overflow-y-auto">
           <div className="flex items-center justify-between">
             <SidebarGroupLabel className="mt-0 h-auto p-0 text-base font-bold text-sidebar-foreground flex items-center gap-2">
               Layers
