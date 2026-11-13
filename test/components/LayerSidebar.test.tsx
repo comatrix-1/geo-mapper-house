@@ -52,6 +52,9 @@ const baseProps = {
   onGeometryEditModeChange: vi.fn(),
   onObjectUpdate: vi.fn(),
   onObjectDelete: vi.fn(),
+  canAddImages: true,
+  onAddImage: vi.fn(),
+  onRemoveImage: vi.fn(),
   onImportData: vi.fn(),
   onSaveProject: vi.fn(),
   onLoadProject: vi.fn(),
@@ -113,9 +116,9 @@ describe('LayerSidebar', () => {
   it('shows the selected object details under a persistent Properties panel', () => {
     renderSidebar({ ...baseProps, selectedObjectId: 'p1', objects });
 
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'My Point' })
-    ).toBeInTheDocument();
+    // The title renders as an editable field with the object's value.
+    const titleInput = screen.getByLabelText('Title') as HTMLInputElement;
+    expect(titleInput.value).toBe('My Point');
     expect(screen.getByText('Properties')).toBeInTheDocument();
     // The panel is persistent, so there is no close control anymore.
     expect(
@@ -128,7 +131,7 @@ describe('LayerSidebar', () => {
 
     expect(screen.getByText('Properties')).toBeInTheDocument();
     expect(
-      screen.getByText(/Select an object to view and edit its properties/)
+      screen.getByText(/Select an object to view its properties/)
     ).toBeInTheDocument();
   });
 

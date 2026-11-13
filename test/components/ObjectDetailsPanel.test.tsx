@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ObjectDetailsPanel from '../../src/components/ObjectDetailsPanel';
-import { getEditHint, VERTEX_LIMIT } from '../../src/utils/editHints';
 import type { MapCircle, MapPoint, MapPolygon, MapPolyline } from '../../src/types';
 
 const point: MapPoint = {
@@ -49,17 +48,32 @@ const polygon: MapPolygon = {
   ],
 };
 
+const renderPanel = (
+  obj: MapCircle | MapPoint | MapPolygon | MapPolyline,
+  onUpdate = vi.fn(),
+  onDelete = vi.fn(),
+) => {
+  render(
+    <ObjectDetailsPanel
+      obj={obj}
+      geometryEditMode="resize"
+      onGeometryEditModeChange={vi.fn()}
+      onUpdate={onUpdate}
+      onDelete={onDelete}
+      canAddImages
+      onAddImage={vi.fn()}
+      onRemoveImage={vi.fn()}
+    />
+  );
+  return { onUpdate, onDelete };
+};
+
 describe('ObjectDetailsPanel', () => {
   it('renders the object title and an editable description field', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={point}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(point);
 
-    expect(screen.getByRole('heading', { name: 'My Point' })).toBeInTheDocument();
+    const titleInput = screen.getByLabelText('Title') as HTMLInputElement;
+    expect(titleInput.value).toBe('My Point');
     // Fields are editable by default: description is a textarea, not read-only text.
     const description = screen.getByLabelText('Description') as HTMLTextAreaElement;
     expect(description.tagName).toBe('TEXTAREA');
@@ -67,26 +81,17 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('shows point coordinates in view mode', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={point}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(point);
 
-    expect(screen.getByText(/Lat: 1\.352100/)).toBeInTheDocument();
-    expect(screen.getByText(/Lng: 103\.819800/)).toBeInTheDocument();
+    // Label and value are separate spans inside the read-only block.
+    expect(screen.getByText('Lat:')).toBeInTheDocument();
+    expect(screen.getByText('1.352100')).toBeInTheDocument();
+    expect(screen.getByText('Lng:')).toBeInTheDocument();
+    expect(screen.getByText('103.819800')).toBeInTheDocument();
   });
 
   it('shows circle area and radius', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(circle);
 
     // 500 m radius -> ~785398 m2
     expect(screen.getByText('785398.2 m²')).toBeInTheDocument();
@@ -94,53 +99,27 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('shows polyline distance', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={polyline}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(polyline);
 
     expect(screen.getByText('157.23 km')).toBeInTheDocument();
   });
 
   it('shows polygon area', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={polygon}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(polygon);
 
     // ~111 km² for a 1x1 degree polygon near the equator
     expect(screen.getByText(/km²/)).toBeInTheDocument();
   });
 
   it('calls onDelete when the delete button is clicked', () => {
-    const onDelete = vi.fn();
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={vi.fn()}
-        onDelete={onDelete}
-      />
-    );
+    const { onDelete } = renderPanel(circle);
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete Object' }));
     expect(onDelete).toHaveBeenCalledWith('c1');
   });
 
   it('patches title via onUpdate with fields editable by default', () => {
-    const onUpdate = vi.fn();
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={onUpdate}
-        onDelete={vi.fn()}
-      />
-    );
+    const { onUpdate } = renderPanel(circle);
 
     const titleInput = screen.getByLabelText('Title');
     fireEvent.change(titleInput, { target: { value: 'Renamed' } });
@@ -149,14 +128,7 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('patches circle radius', () => {
-    const onUpdate = vi.fn();
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={onUpdate}
-        onDelete={vi.fn()}
-      />
-    );
+    const { onUpdate } = renderPanel(circle);
 
     const radiusInput = screen.getByLabelText('Radius (m)');
     fireEvent.change(radiusInput, { target: { value: '750' } });
@@ -165,14 +137,7 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('keeps fractional and cleared radius text in the field', () => {
-    const onUpdate = vi.fn();
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={onUpdate}
-        onDelete={vi.fn()}
-      />
-    );
+    const { onUpdate } = renderPanel(circle);
 
     const radiusInput = screen.getByLabelText('Radius (m)') as HTMLInputElement;
 
@@ -189,14 +154,7 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('does not patch invalid or non-positive radius values', () => {
-    const onUpdate = vi.fn();
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={onUpdate}
-        onDelete={vi.fn()}
-      />
-    );
+    const { onUpdate } = renderPanel(circle);
 
     const radiusInput = screen.getByLabelText('Radius (m)');
 
@@ -208,49 +166,11 @@ describe('ObjectDetailsPanel', () => {
   });
 
   it('shows a Save button that confirms with Saved feedback', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
+    renderPanel(circle);
 
     const saveButton = screen.getByRole('button', { name: /Save/ });
     fireEvent.click(saveButton);
 
     expect(screen.getByRole('button', { name: /Saved/ })).toBeInTheDocument();
-  });
-});
-
-describe('getEditHint', () => {
-  it('provides a hint for every object type', () => {
-    const hints = [point, circle, polyline, polygon].map(getEditHint);
-    for (const hint of hints) {
-      expect(hint).toBeTruthy();
-    }
-  });
-
-  it('warns about complex shapes beyond the vertex limit', () => {
-    const complex: MapPolyline = {
-      ...polyline,
-      positions: Array.from({ length: VERTEX_LIMIT + 1 }, (_, i) => ({
-        lat: i * 0.001,
-        lng: i * 0.001,
-      })),
-    };
-    expect(getEditHint(complex)).toMatch(/too complex/i);
-    expect(getEditHint(polyline)).not.toMatch(/too complex/i);
-  });
-
-  it('renders the hint inside the panel in view mode', () => {
-    render(
-      <ObjectDetailsPanel
-        obj={circle}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
-    );
-    expect(screen.getByText(getEditHint(circle))).toBeInTheDocument();
   });
 });

@@ -67,6 +67,9 @@ const renderPanel = (
       onGeometryEditModeChange={onChange}
       onUpdate={vi.fn()}
       onDelete={vi.fn()}
+      canAddImages
+      onAddImage={vi.fn()}
+      onRemoveImage={vi.fn()}
     />,
   );
   return onChange;

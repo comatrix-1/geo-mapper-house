@@ -61,6 +61,10 @@ interface LayerSidebarProps {
   onGeometryEditModeChange: (mode: GeometryEditMode) => void;
   onObjectUpdate: (id: string, updates: Partial<MapObject>) => void;
   onObjectDelete: (id: string) => void;
+  /** False while signed out: image attachments are view-only (see panel). */
+  canAddImages: boolean;
+  onAddImage: (id: string, files: File[]) => void;
+  onRemoveImage: (id: string, imageId: string) => void;
   onImportData: (layers: Layer[], objects: MapObject[]) => void;
   onSaveProject: () => void;
   onLoadProject: (file: File) => void;
@@ -283,6 +287,9 @@ const LayerSidebar = ({
   onGeometryEditModeChange,
   onObjectUpdate,
   onObjectDelete,
+  canAddImages,
+  onAddImage,
+  onRemoveImage,
   onImportData,
   onSaveProject,
   onLoadProject,
@@ -396,7 +403,7 @@ const LayerSidebar = ({
               >
                 <Upload size={12} />
               </Button>
-              <Button variant="ghost" size="icon-sm" onClick={addLayer}>
+              <Button variant="ghost" size="icon-sm" aria-label="Add Layer" onClick={addLayer}>
                 <Plus size={12} />
               </Button>
               <input
@@ -491,6 +498,9 @@ const LayerSidebar = ({
                 onGeometryEditModeChange={onGeometryEditModeChange}
                 onUpdate={onObjectUpdate}
                 onDelete={onObjectDelete}
+                canAddImages={canAddImages}
+                onAddImage={onAddImage}
+                onRemoveImage={onRemoveImage}
               />
             ) : (
               <p className="text-xs text-sidebar-foreground/50 py-1">

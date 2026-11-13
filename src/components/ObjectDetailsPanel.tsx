@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import type {
   GeometryEditMode,
   MapCircle,
   MapImage,
   MapObject,
+  MapObjectImage,
   MapPoint,
   MapPolygon,
   MapPolyline,
@@ -14,7 +15,7 @@ import {
   formatDistance,
   formatArea,
 } from "../utils/geoUtils"
-import { Save, Trash2, Check, Ruler } from "lucide-react"
+import { Save, Trash2, Check, Ruler, ImagePlus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -26,6 +27,13 @@ interface ObjectDetailsPanelProps {
   /** Patch the object; merged with the existing object and persisted by the parent. */
   onUpdate: (id: string, updates: Partial<MapObject>) => void
   onDelete: (id: string) => void
+  /** False while signed out: uploads need the signed-in user's storage token,
+   * so the Add control is disabled and remove controls are hidden. */
+  canAddImages: boolean
+  /** Attach the picked files to the object; validation and upload live in App. */
+  onAddImage: (id: string, files: File[]) => void
+  /** Detach one image from the object; storage cleanup is handled in App. */
+  onRemoveImage: (id: string, imageId: string) => void
 }
 
 /** Object types that can switch between four-handle resize and vertex editing. */
@@ -250,12 +258,118 @@ const ObjectEditExtras = ({
   }
 }
 
+/**
+ * Attached reference images for the selected object. Thumbnails open the full
+ * image in a new tab; the remove control sits on top of each thumbnail (a
+ * sibling of the link, not a child, so the anchor stays a valid link). The
+ * dashed tile opens a multi-file picker; the parent validates and uploads.
+ */
+const ImagesSection = ({
+  obj,
+  canAddImages,
+  onAddImage,
+  onRemoveImage,
+}: {
+  obj: MapObject
+  canAddImages: boolean
+  onAddImage: ObjectDetailsPanelProps["onAddImage"]
+  onRemoveImage: ObjectDetailsPanelProps["onRemoveImage"]
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const images = obj.images ?? []
+
+  const handleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      onAddImage(obj.id, Array.from(files))
+    }
+    // Allow re-picking the same file after a failed upload.
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <span
+        id="object-images-label"
+        className="block text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider"
+      >
+        Images
+      </span>
+      <div
+        className="grid grid-cols-4 gap-1.5"
+        role="group"
+        aria-labelledby="object-images-label"
+      >
+        {images.map((image: MapObjectImage) => (
+          <div
+            key={image.id}
+            className="relative aspect-square rounded-md overflow-hidden border border-sidebar-border bg-sidebar-accent/50"
+          >
+            <a
+              href={image.imageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={image.fileName}
+              className="block h-full w-full"
+            >
+              <img
+                src={image.imageUrl}
+                alt={image.fileName}
+                className="h-full w-full object-cover"
+              />
+            </a>
+            {canAddImages && (
+              <button
+                type="button"
+                onClick={() => onRemoveImage(obj.id, image.id)}
+                aria-label={`Remove image ${image.fileName}`}
+                title={`Remove image ${image.fileName}`}
+                className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-background/80 text-sidebar-foreground hover:text-destructive"
+              >
+                <X size={10} />
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          disabled={!canAddImages}
+          onClick={() => fileInputRef.current?.click()}
+          aria-label="Add images"
+          title={canAddImages ? "Add images" : "Sign in to add images."}
+          className="aspect-square rounded-md border border-dashed border-sidebar-border text-sidebar-foreground/50 flex items-center justify-center hover:border-sidebar-foreground/50 hover:text-sidebar-foreground disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <ImagePlus size={16} />
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          multiple
+          accept="image/*"
+          onChange={handleFilesChange}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      </div>
+      {!canAddImages && (
+        <p className="text-xs text-sidebar-foreground/50">
+          Sign in to add images.
+        </p>
+      )}
+    </div>
+  )
+}
+
 const ObjectDetailsPanel = ({
   obj,
   geometryEditMode,
   onGeometryEditModeChange,
   onUpdate,
   onDelete,
+  canAddImages,
+  onAddImage,
+  onRemoveImage,
 }: ObjectDetailsPanelProps) => {
   // Fields are editable by default and every change patches the object
   // optimistically (the parent persists live), so there is no separate edit
@@ -308,6 +422,13 @@ const ObjectDetailsPanel = ({
           placeholder="Description"
         />
       </div>
+
+      <ImagesSection
+        obj={obj}
+        canAddImages={canAddImages}
+        onAddImage={onAddImage}
+        onRemoveImage={onRemoveImage}
+      />
 
       <ObjectDetails obj={obj} />
 

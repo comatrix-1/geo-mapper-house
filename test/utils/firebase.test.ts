@@ -56,6 +56,7 @@ vi.mock('@supabase/supabase-js', () => ({
 import {
   uploadMapImage,
   deleteMapImage,
+  buildObjectImageStoragePath,
   saveObject,
   loadUserData,
 } from '../../src/utils/firebase';
@@ -92,6 +93,18 @@ describe('Supabase Storage helpers (re-exported from firebase.ts)', () => {
   it('deletes an image from storage', async () => {
     await deleteMapImage('map-images', storagePath);
     expect(supabaseStorage.remove).toHaveBeenCalledWith([storagePath]);
+  });
+
+  it('builds object-image attachment paths under the objectImages prefix', () => {
+    expect(buildObjectImageStoragePath('u1', 'obj-1', 'img-1', 'photo.png')).toBe(
+      'users/u1/objectImages/obj-1/img-1/photo.png',
+    );
+  });
+
+  it('sanitizes attachment filenames the same way as overlay paths', () => {
+    expect(buildObjectImageStoragePath('u1', 'obj-1', 'img-2', 'a/b photo.png')).toBe(
+      'users/u1/objectImages/obj-1/img-2/a_b photo.png',
+    );
   });
 });
 

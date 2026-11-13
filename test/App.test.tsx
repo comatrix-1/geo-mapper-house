@@ -41,6 +41,12 @@ const mockFb = vi.hoisted(() => ({
   uploadMapImage: vi.fn(),
   buildMapImageStoragePath: (uid: string, objectId: string, fileName: string) =>
     `users/${uid}/mapImages/${objectId}/${fileName}`,
+  buildObjectImageStoragePath: (
+    uid: string,
+    objectId: string,
+    imageId: string,
+    fileName: string,
+  ) => `users/${uid}/objectImages/${objectId}/${imageId}/${fileName}`,
   MAP_IMAGES_BUCKET: 'map-images',
   loadUserData: vi.fn().mockResolvedValue({ layers: null, objects: [] }),
   saveLayers: vi.fn(),
@@ -52,6 +58,7 @@ vi.mock('../src/utils/firebase', () => ({
   deleteMapImage: mockFb.deleteMapImage,
   uploadMapImage: mockFb.uploadMapImage,
   buildMapImageStoragePath: mockFb.buildMapImageStoragePath,
+  buildObjectImageStoragePath: mockFb.buildObjectImageStoragePath,
   MAP_IMAGES_BUCKET: mockFb.MAP_IMAGES_BUCKET,
   loadUserData: mockFb.loadUserData,
   saveLayers: mockFb.saveLayers,
@@ -309,5 +316,217 @@ describe('supabase storage', () => {
     expect(supabase.buildMapImageStoragePath('u1', 'o1', 'map.png')).toBe(
       'users/u1/mapImages/o1/map.png',
     );
+  });
+
+  it('builds object attachment paths under the objectImages prefix', async () => {
+    const supabase = await import('../src/utils/supabase');
+    expect(supabase.buildObjectImageStoragePath('u1', 'o1', 'i1', 'map.png')).toBe(
+      'users/u1/objectImages/o1/i1/map.png',
+    );
+  });
+});
+
+// --- Image attachments on map objects -------------------------------------
+
+const attachment1 = {
+  id: 'att-1',
+  imageUrl: 'https://download.example/a1.png',
+  fileName: 'a1.png',
+  storagePath: 'users/u1/objectImages/point-1/att-1/a1.png',
+  storageOwnerId: 'u1',
+};
+const attachment2 = {
+  id: 'att-2',
+  imageUrl: 'https://download.example/a2.png',
+  fileName: 'a2.png',
+  storagePath: 'users/u2/objectImages/point-1/att-2/a2.png',
+  storageOwnerId: 'u2',
+};
+const pointWithAttachments = {
+  id: 'point-1',
+  layerId: '1',
+  type: 'point',
+  title: 'Photo point',
+  description: '',
+  position: { lat: 1, lng: 2 },
+  images: [attachment1, attachment2],
+};
+
+const goodFile = new File(['x'], 'good.png', { type: 'image/png' });
+const badFile = new File(['x'], 'bad.txt', { type: 'text/plain' });
+
+/** Select the point in the sidebar, then drive its hidden multi-file input. */
+const attachFiles = async (
+  user: ReturnType<typeof userEvent.setup>,
+  files: File[],
+) => {
+  await user.click(screen.getByText('Photo point'));
+  // Scoped to the panel's multi-file picker: the Toolbar's single-file input
+  // shares the image/* accept but not the `multiple` attribute. user-event
+  // takes the whole batch as one array argument.
+  const input = document.querySelector(
+    'input[type="file"][accept="image/*"][multiple]'
+  ) as HTMLInputElement;
+  await user.upload(input, files);
+};
+
+describe('App object image attachments', () => {
+  it('rejects a batch with an invalid file before any upload', async () => {
+    // user-event filters picked files by the input's accept attribute (like a
+    // real file dialog); disable that so the invalid .txt actually reaches
+    // the strict batch validation.
+    const user = userEvent.setup({ applyAccept: false });
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+
+    mockImg.validateImageFile.mockImplementation((file: File) =>
+      file.name === 'bad.txt' ? 'Please choose an image file.' : null,
+    );
+
+    await attachFiles(user, [goodFile, badFile]);
+
+    expect(mockFb.uploadMapImage).not.toHaveBeenCalled();
+    expect(mockFb.saveObject).not.toHaveBeenCalled();
+    expect(workspaceState.patchObject).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent('bad.txt');
+  });
+
+  it('attaches every file of a valid batch in a single object update', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+
+    mockFb.uploadMapImage.mockImplementation(
+      (_bucket: string, storagePath: string) =>
+        Promise.resolve({
+          imageUrl: `https://download.example/${storagePath}`,
+          storagePath,
+        }),
+    );
+
+    const fileA = new File(['a'], 'a.png', { type: 'image/png' });
+    const fileB = new File(['b'], 'b.png', { type: 'image/png' });
+    await attachFiles(user, [fileA, fileB]);
+
+    expect(mockFb.uploadMapImage).toHaveBeenCalledTimes(2);
+    expect(mockFb.uploadMapImage.mock.calls[0][1]).toMatch(
+      /^users\/u1\/objectImages\/point-1\//,
+    );
+    // One Firestore write for the whole batch, existing attachments kept.
+    expect(workspaceState.patchObject).toHaveBeenCalledTimes(1);
+    const update = workspaceState.patchObject.mock.calls[0][1];
+    expect(update.images).toHaveLength(4);
+    expect(update.images.slice(2)).toEqual([
+      expect.objectContaining({ fileName: 'a.png', storageOwnerId: 'u1' }),
+      expect.objectContaining({ fileName: 'b.png', storageOwnerId: 'u1' }),
+    ]);
+  });
+
+  it('attaches the successful uploads and toasts when some uploads fail', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+
+    mockFb.uploadMapImage.mockImplementation(
+      (_bucket: string, _storagePath: string, file: File) =>
+        file.name === 'fail.png'
+          ? Promise.reject(new Error('Storage down'))
+          : Promise.resolve({
+              imageUrl: 'https://download.example/ok.png',
+              storagePath: 'users/u1/objectImages/point-1/ok/ok.png',
+            }),
+    );
+
+    const okFile = new File(['o'], 'ok.png', { type: 'image/png' });
+    const failFile = new File(['f'], 'fail.png', { type: 'image/png' });
+    await attachFiles(user, [failFile, okFile]);
+
+    // Successful attachments still land in one update; the failure toasts.
+    expect(workspaceState.patchObject).toHaveBeenCalledTimes(1);
+    const update = workspaceState.patchObject.mock.calls[0][1];
+    expect(update.images).toHaveLength(3);
+    expect(update.images[2]).toMatchObject({ fileName: 'ok.png' });
+    expect(screen.getByRole('alert')).toHaveTextContent('fail.png');
+  });
+
+  it('removes an attachment even when its storage delete rejects', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    mockFb.deleteMapImage.mockRejectedValueOnce(new Error('Storage denied'));
+
+    await user.click(screen.getByText('Photo point'));
+    await user.click(screen.getByRole('button', { name: 'Remove image a1.png' }));
+
+    // The removal stands; the failed cleanup of the owned file is surfaced.
+    expect(workspaceState.patchObject).toHaveBeenCalledWith('point-1', {
+      images: [attachment2],
+    });
+    expect(mockFb.deleteMapImage).toHaveBeenCalledWith(
+      'map-images',
+      attachment1.storagePath,
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not delete image file');
+  });
+
+  it('never deletes another owner\u2019s attachment file when removing it', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+
+    await user.click(screen.getByText('Photo point'));
+    await user.click(screen.getByRole('button', { name: 'Remove image a2.png' }));
+
+    // The imported attachment belongs to u2: removal is Firestore-only.
+    expect(mockFb.deleteMapImage).not.toHaveBeenCalled();
+    // The workspace mock keeps the seeded objects, so the filter is computed
+    // against them: only att-2 (the removed one) is dropped.
+    expect(workspaceState.patchObject).toHaveBeenCalledWith('point-1', {
+      images: [attachment1],
+    });
+  });
+
+  it('deletes owned attachment files, then the object', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+
+    await user.click(screen.getByText('Photo point'));
+    await user.click(screen.getByRole('button', { name: 'Delete Object' }));
+
+    expect(mockFb.deleteMapImage).toHaveBeenCalledWith(
+      'map-images',
+      attachment1.storagePath,
+    );
+    // The imported attachment belongs to u2 and is never storage-deleted.
+    expect(mockFb.deleteMapImage).not.toHaveBeenCalledWith(
+      'map-images',
+      attachment2.storagePath,
+    );
+    expect(mockFb.deleteObject).toHaveBeenCalledWith('u1', 'point-1');
+    expect(workspaceState.deleteObject).toHaveBeenCalledWith('point-1');
+  });
+
+  it('still deletes the object when attachment cleanup fails, surfacing the failure', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    mockFb.deleteMapImage.mockRejectedValue(new Error('Storage denied'));
+
+    await user.click(screen.getByText('Photo point'));
+    await user.click(screen.getByRole('button', { name: 'Delete Object' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not delete image file(s): a1.png'
+    );
+    expect(mockFb.deleteObject).toHaveBeenCalledWith('u1', 'point-1');
+    expect(workspaceState.deleteObject).toHaveBeenCalledWith('point-1');
   });
 });

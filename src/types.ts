@@ -10,12 +10,30 @@ export type DrawingMode = 'none' | 'point' | 'circle' | 'polyline' | 'polygon' |
  */
 export type GeometryEditMode = 'resize' | 'vertices';
 
+/**
+ * Metadata for an image attached to any map object. The file lives in the
+ * `map-images` bucket under `users/<uid>/objectImages/<objectId>/<imageId>/`;
+ * only the reference travels with the object, so previously saved objects
+ * without attachments load unchanged.
+ */
+export interface MapObjectImage {
+  id: string;
+  imageUrl: string;
+  fileName: string;
+  /** Storage path of the file, when it was uploaded by the app. */
+  storagePath?: string;
+  /** Firebase UID of the user who uploaded the file, for ownership-scoped cleanup. */
+  storageOwnerId?: string;
+}
+
 export interface BaseMapObject {
   id: string;
   layerId: string;
   type: 'point' | 'circle' | 'polyline' | 'polygon' | 'image';
   title: string;
   description: string;
+  /** Attached reference images. Absent means the object has none. */
+  images?: MapObjectImage[];
 }
 
 export interface MapImageBounds {
