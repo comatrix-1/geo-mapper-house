@@ -15,6 +15,7 @@ vi.mock('firebase/auth', () => ({
 }));
 
 vi.mock('firebase/firestore', () => ({
+  arrayUnion: vi.fn((...values: unknown[]) => ({ type: 'arrayUnion', values })),
   collection: vi.fn(),
   deleteDoc: vi.fn(),
   deleteField: vi.fn(),
@@ -22,6 +23,7 @@ vi.mock('firebase/firestore', () => ({
   getDoc: vi.fn(),
   getDocs: vi.fn(),
   getFirestore: vi.fn(() => ({})),
+  runTransaction: vi.fn(),
   setDoc: vi.fn(),
   updateDoc: vi.fn(),
   writeBatch: vi.fn(),
@@ -58,10 +60,12 @@ import {
   deleteMapImage,
   buildObjectImageStoragePath,
   saveObject,
+  appendObjectImages,
+  removeObjectImage,
   loadUserData,
 } from '../../src/utils/firebase';
 import type { MapImage } from '../../src/types';
-import { doc, getDoc, getDocs, setDoc } from 'firebase/firestore';
+import { arrayUnion, doc, getDoc, getDocs, runTransaction, updateDoc } from 'firebase/firestore';
 
 const pngFile = new File(['x'], 'map.png', { type: 'image/png' });
 const storagePath = 'users/u1/mapImages/o1/map.png';
@@ -140,17 +144,28 @@ const legacyImage: MapImage = {
 };
 
 describe('image opacity persistence', () => {
+  const transactionSet = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(doc).mockReturnValue('mock-doc-ref' as never);
-    vi.mocked(setDoc).mockResolvedValue(undefined as never);
+    transactionSet.mockReset();
+    vi.mocked(runTransaction).mockImplementation(async (_db, operation) =>
+      operation({
+        get: vi.fn().mockResolvedValue({
+          exists: () => false,
+          data: () => ({}),
+        }),
+        set: transactionSet,
+      } as never),
+    );
   });
 
   it('saves an image with its opacity', async () => {
     await saveObject('u1', imageWithOpacity);
 
-    expect(setDoc).toHaveBeenCalledWith('mock-doc-ref', imageWithOpacity);
-    expect(setDoc).toHaveBeenCalledWith(
+    expect(transactionSet).toHaveBeenCalledWith('mock-doc-ref', imageWithOpacity);
+    expect(transactionSet).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ id: 'img-1', opacity: 0.4 }),
     );
@@ -185,5 +200,92 @@ describe('image opacity persistence', () => {
 
     expect(objects).toEqual([legacyImage]);
     expect(objects[0]).not.toHaveProperty('opacity');
+  });
+});
+
+describe('concurrent object image persistence', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(doc).mockReturnValue('mock-doc-ref' as never);
+  });
+
+  it('preserves the stored images when saving an object snapshot with stale images', async () => {
+    const storedImages = [
+      { id: 'existing', imageUrl: 'https://download.example/existing.png', fileName: 'existing.png' },
+      { id: 'appended', imageUrl: 'https://download.example/appended.png', fileName: 'appended.png' },
+    ];
+    const set = vi.fn();
+    vi.mocked(runTransaction).mockImplementation(async (_db, operation) =>
+      operation({
+        get: vi.fn().mockResolvedValue({
+          exists: () => true,
+          data: () => ({ images: storedImages }),
+        }),
+        set,
+      } as never),
+    );
+
+    await saveObject('u1', { ...imageWithOpacity, images: [storedImages[0]] });
+
+    expect(set).toHaveBeenCalledWith(
+      'mock-doc-ref',
+      expect.objectContaining({ id: 'img-1', images: storedImages }),
+    );
+  });
+
+  it('appends images atomically instead of replacing the stored images field', async () => {
+    const newImage = {
+      id: 'appended',
+      imageUrl: 'https://download.example/appended.png',
+      fileName: 'appended.png',
+    };
+    vi.mocked(updateDoc).mockResolvedValue(undefined as never);
+
+    await appendObjectImages('u1', 'img-1', [newImage]);
+
+    expect(arrayUnion).toHaveBeenCalledWith(newImage);
+    expect(updateDoc).toHaveBeenCalledWith('mock-doc-ref', {
+      images: { type: 'arrayUnion', values: [newImage] },
+    });
+  });
+
+  it('removes an image by id from the current stored document and reports a missing document', async () => {
+    const latestImages = [
+      { id: 'remove-me', imageUrl: 'https://download.example/a.png', fileName: 'a.png' },
+      { id: 'keep-me', imageUrl: 'https://download.example/b.png', fileName: 'b.png' },
+    ];
+    let updatedImages: unknown;
+    vi.mocked(runTransaction)
+      .mockImplementationOnce(async (_db, operation) =>
+        operation({
+          get: vi.fn().mockResolvedValue({
+            exists: () => true,
+            data: () => ({ images: latestImages }),
+          }),
+          update: vi.fn((_ref, value) => {
+            updatedImages = value.images;
+          }),
+        } as never),
+      )
+      .mockImplementationOnce(async (_db, operation) =>
+        operation({
+          get: vi.fn().mockResolvedValue({
+            exists: () => true,
+            data: () => ({ images: [latestImages[1]] }),
+          }),
+          update: vi.fn(),
+        } as never),
+      )
+      .mockImplementationOnce(async (_db, operation) =>
+        operation({
+          get: vi.fn().mockResolvedValue({ exists: () => false, data: () => undefined }),
+          update: vi.fn(),
+        } as never),
+      );
+
+    await expect(removeObjectImage('u1', 'img-1', 'remove-me')).resolves.toBe(true);
+    await expect(removeObjectImage('u1', 'img-1', 'already-removed')).resolves.toBe(true);
+    await expect(removeObjectImage('u1', 'deleted-object', 'remove-me')).resolves.toBe(false);
+    expect(updatedImages).toEqual([latestImages[1]]);
   });
 });

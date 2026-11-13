@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type * as L from 'leaflet';
 import MapBoard from './components/MapBoard';
 import LayerSidebar from './components/LayerSidebar';
@@ -20,6 +20,7 @@ import type { MapImage, MapObjectImage } from './types';
 import { useAuthUser } from './hooks/use-auth-user';
 import { useWorkspace } from './hooks/use-workspace';
 import { useMapSession } from './hooks/use-map-session';
+import { enqueueImageCleanup, retryImageCleanup } from './utils/image-cleanup-queue';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -35,6 +36,28 @@ const App: React.FC = () => {
   const user = useAuthUser();
   const workspace = useWorkspace(user?.uid ?? null);
   const session = useMapSession(workspace.layers.length > 0);
+  const [imageError, setError] = useState<string | null>(null);
+  const userId = user?.uid;
+
+  useEffect(() => {
+    if (!userId) return;
+
+    let active = true;
+    retryImageCleanup(userId, deleteMapImage)
+      .then((failedNames) => {
+        if (active && failedNames.length > 0) {
+          setError(`Could not delete image file(s): ${failedNames.join(', ')}. Cleanup will retry.`);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to retry pending image cleanup:', err);
+        if (active) setError('Could not retry pending image cleanup.');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [userId]);
 
   // Objects can only be drawn into a layer, so the shape tools stay off while
   // the workspace is empty. The ruler measures without creating anything.
@@ -59,58 +82,78 @@ const App: React.FC = () => {
   // objects (a different owner, or no owner/path) keep their download URL and
   // are removed through Firestore only — never through Storage. Returns true
   // when the object was removed from local state, false when it was retained.
-  const deleteObjectSafely = async (id: string): Promise<boolean> => {
-    const target = workspace.objects.find((o) => o.id === id);
-    if (!target) return false;
+  const deleteObjectSafely = (id: string): Promise<boolean> =>
+    workspace.withObjectImageLock(id, async (target) => {
+      if (!target) return false;
 
-    const isOwnedImage =
-      !!user &&
-      target.type === 'image' &&
-      target.storageOwnerId === user.uid &&
-      !!target.storagePath;
+      const isOwnedImage =
+        !!user &&
+        target.type === 'image' &&
+        target.storageOwnerId === user.uid &&
+        !!target.storagePath;
 
-    if (isOwnedImage) {
-      // Storage first: a Storage failure must not remove the only file
-      // reference, so retain the object and surface the error.
+      if (isOwnedImage) {
+        // Storage first: a Storage failure must not remove the only file
+        // reference, so retain the object and surface the error.
+        try {
+          await deleteMapImage(MAP_IMAGES_BUCKET, target.storagePath);
+        } catch (err) {
+          console.error('Failed to delete image file:', err);
+          setError('Could not delete image file.');
+          return false;
+        }
+      }
+
+      // The per-object lock waits for appends already in progress and prevents
+      // a new append from landing between this snapshot and document deletion.
+      const ownerId = user?.uid;
+      const ownedAttachments = (target.images ?? []).filter(
+        (img) => !!ownerId && img.storageOwnerId === ownerId && !!img.storagePath,
+      );
+
       try {
-        await deleteMapImage(MAP_IMAGES_BUCKET, target.storagePath);
+        if (user) await deleteObject(user.uid, id);
       } catch (err) {
-        console.error('Failed to delete image file:', err);
-        setError('Could not delete image file.');
+        console.error('Failed to delete object:', err);
+        setError(isOwnedImage ? 'Could not delete image overlay.' : 'Could not delete object.');
         return false;
       }
-    }
 
-    // Attachment files are one reference among several on a still-existing
-    // object, so cleanup is best-effort: each owned file is removed, a
-    // failure is surfaced but never blocks the object deletion below.
-    const ownedAttachments = (target.images ?? []).filter(
-      (img) => !!user && img.storageOwnerId === user.uid && !!img.storagePath,
-    );
-    const failedAttachments: string[] = [];
-    for (const img of ownedAttachments) {
-      try {
-        await deleteMapImage(MAP_IMAGES_BUCKET, img.storagePath as string);
-      } catch (err) {
-        console.error('Failed to delete attachment file:', err);
-        failedAttachments.push(img.fileName);
+      // Attachment files are one reference among several on a now-deleted
+      // object, so cleanup is best-effort and failures are durably queued.
+      const failedAttachments: typeof ownedAttachments = [];
+      for (const img of ownedAttachments) {
+        try {
+          await deleteMapImage(MAP_IMAGES_BUCKET, img.storagePath as string);
+        } catch (err) {
+          console.error('Failed to delete attachment file:', err);
+          failedAttachments.push(img);
+        }
       }
-    }
-    if (failedAttachments.length > 0) {
-      setError(`Could not delete image file(s): ${failedAttachments.join(', ')}.`);
-    }
+      if (failedAttachments.length > 0 && ownerId) {
+        try {
+          enqueueImageCleanup(
+            failedAttachments.map((image) => ({
+              uid: ownerId,
+              bucket: MAP_IMAGES_BUCKET,
+              storagePath: image.storagePath as string,
+              fileName: image.fileName,
+            })),
+          );
+          setError(
+            `Could not delete image file(s): ${failedAttachments.map((image) => image.fileName).join(', ')}. Cleanup will retry.`,
+          );
+        } catch (err) {
+          console.error('Failed to queue attachment cleanup:', err);
+          setError(
+            `Could not delete image file(s): ${failedAttachments.map((image) => image.fileName).join(', ')}. Retry could not be saved.`,
+          );
+        }
+      }
 
-    try {
-      if (user) await deleteObject(user.uid, id);
-    } catch (err) {
-      console.error('Failed to delete object:', err);
-      setError(isOwnedImage ? 'Could not delete image overlay.' : 'Could not delete object.');
-      return false;
-    }
-
-    workspace.deleteObject(id);
-    return true;
-  };
+      workspace.removeObjectLocally(id);
+      return true;
+    });
 
   const handleObjectDelete = async (id: string) => {
     const removed = await deleteObjectSafely(id);
@@ -136,7 +179,6 @@ const App: React.FC = () => {
   // atomic flow. The map instance is supplied by MapBoard via onMapReady so
   // the initial bounds can be computed from the live viewport.
   const mapRef = useRef<L.Map | null>(null);
-  const [imageError, setError] = useState<string | null>(null);
   const handleMapReady = (map: L.Map) => {
     mapRef.current = map;
   };
@@ -280,12 +322,63 @@ const App: React.FC = () => {
       setError(`Could not upload: ${failedNames.join(', ')}.`);
     }
 
-    // One Firestore write for the whole batch. patchObject merges into the
-    // freshly stored object, so concurrent panel edits survive.
-    const target = workspace.objects.find((o) => o.id === id);
-    workspace.patchObject(id, {
-      images: [...(target?.images ?? []), ...uploadedImages],
-    });
+    // Both local and Firestore writes merge against the current image list.
+    // The workspace serializes this with removal and deletion, and reconciles
+    // ambiguous write failures against the stored document.
+    let result;
+    try {
+      result = await workspace.appendObjectImages(id, uploadedImages);
+    } catch (err) {
+      console.error('Failed to persist image attachments:', err);
+      setError('Could not save image attachments; stored references could not be verified.');
+      return;
+    }
+    if (result.status === 'attached') return;
+
+    if (result.status === 'failed') {
+      console.error('Failed to persist image attachments:', result.error);
+      setError('Could not save image attachments.');
+    }
+
+    const unreferencedImages =
+      result.status === 'failed'
+        ? uploadedImages.filter(
+            (image) =>
+              !result.confirmedImages.some(
+                (confirmed) =>
+                  confirmed.id === image.id && confirmed.storagePath === image.storagePath,
+              ),
+          )
+        : uploadedImages;
+    const failedCleanup: typeof uploadedImages = [];
+    for (const image of unreferencedImages) {
+      try {
+        await deleteMapImage(MAP_IMAGES_BUCKET, image.storagePath);
+      } catch (err) {
+        console.error('Failed to clean up uploaded image:', err);
+        failedCleanup.push(image);
+      }
+    }
+    if (failedCleanup.length > 0) {
+      try {
+        enqueueImageCleanup(
+          failedCleanup.map((image) => ({
+            uid: user.uid,
+            bucket: MAP_IMAGES_BUCKET,
+            storagePath: image.storagePath,
+            fileName: image.fileName,
+          })),
+        );
+        setError(
+          `Could not delete uploaded image file(s): ${failedCleanup.map((image) => image.fileName).join(', ')}. Cleanup will retry.`,
+        );
+      } catch (err) {
+        console.error('Failed to queue uploaded image cleanup:', err);
+        setError(
+          `Could not delete uploaded image file(s): ${failedCleanup.map((image) => image.fileName).join(', ')}. Retry could not be saved.`,
+        );
+      }
+    }
   };
 
   const handleRemoveObjectImage = async (id: string, imageId: string) => {
@@ -293,10 +386,17 @@ const App: React.FC = () => {
     const image = target?.images?.find((img) => img.id === imageId);
     if (!image) return;
 
-    // Document first: the removal must stand even if storage cleanup fails.
-    workspace.patchObject(id, {
-      images: (target?.images ?? []).filter((img) => img.id !== imageId),
-    });
+    // Persist the removal before changing local state or deleting the file.
+    try {
+      const removed = await workspace.removeObjectImage(id, imageId);
+      if (!removed) {
+        setError(`Could not remove image: ${image.fileName}.`);
+        return;
+      }
+    } catch {
+      setError(`Could not remove image: ${image.fileName}.`);
+      return;
+    }
 
     // Best-effort cleanup of the removed file, only when the current user
     // owns it (imported attachments from another owner are never deleted).
@@ -305,7 +405,20 @@ const App: React.FC = () => {
         await deleteMapImage(MAP_IMAGES_BUCKET, image.storagePath);
       } catch (err) {
         console.error('Failed to delete attachment file:', err);
-        setError(`Could not delete image file: ${image.fileName}.`);
+        try {
+          enqueueImageCleanup([
+            {
+              uid: user.uid,
+              bucket: MAP_IMAGES_BUCKET,
+              storagePath: image.storagePath,
+              fileName: image.fileName,
+            },
+          ]);
+          setError(`Could not delete image file: ${image.fileName}. Cleanup will retry.`);
+        } catch (queueError) {
+          console.error('Failed to queue attachment cleanup:', queueError);
+          setError(`Could not delete image file: ${image.fileName}. Retry could not be saved.`);
+        }
       }
     }
   };
