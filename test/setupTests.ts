@@ -1,6 +1,13 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// src/utils/supabase.ts throws at import time without these, but no test
+// talks to the real project (the Supabase client is mocked per-suite), so
+// placeholder values are only needed to let the module load. Existing .env
+// values, when present, win.
+import.meta.env.VITE_SUPABASE_URL ??= 'https://stub.supabase.co';
+import.meta.env.VITE_SUPABASE_KEY ??= 'stub-anon-key';
+
 // Mock Leaflet because JSDOM doesn't support Canvas/Rendering contexts well
 vi.mock('leaflet', async () => {
   return {

@@ -9,14 +9,14 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/s
 import { saveProjectToFile, loadProjectFromFile } from './utils/fileImporter';
 import {
   saveObject, deleteObject, uploadMapImage, deleteMapImage,
-  buildMapImageStoragePath, MAP_IMAGES_BUCKET
+  buildMapImageStoragePath, buildObjectImageStoragePath, MAP_IMAGES_BUCKET
 } from './utils/firebase';
 import {
   validateImageFile,
   getImageDimensions,
   createImageBounds,
 } from './utils/imageOverlay';
-import type { MapImage } from './types';
+import type { MapImage, MapObjectImage } from './types';
 import { useAuthUser } from './hooks/use-auth-user';
 import { useWorkspace } from './hooks/use-workspace';
 import { useMapSession } from './hooks/use-map-session';
@@ -55,7 +55,7 @@ const App: React.FC = () => {
     }
   };
 
-  // Storage is only cleaned up for images the current user owns. Imported
+  // Storage is only cleaned up for files the current user owns. Imported
   // objects (a different owner, or no owner/path) keep their download URL and
   // are removed through Firestore only — never through Storage. Returns true
   // when the object was removed from local state, false when it was retained.
@@ -79,6 +79,25 @@ const App: React.FC = () => {
         setError('Could not delete image file.');
         return false;
       }
+    }
+
+    // Attachment files are one reference among several on a still-existing
+    // object, so cleanup is best-effort: each owned file is removed, a
+    // failure is surfaced but never blocks the object deletion below.
+    const ownedAttachments = (target.images ?? []).filter(
+      (img) => !!user && img.storageOwnerId === user.uid && !!img.storagePath,
+    );
+    const failedAttachments: string[] = [];
+    for (const img of ownedAttachments) {
+      try {
+        await deleteMapImage(MAP_IMAGES_BUCKET, img.storagePath as string);
+      } catch (err) {
+        console.error('Failed to delete attachment file:', err);
+        failedAttachments.push(img.fileName);
+      }
+    }
+    if (failedAttachments.length > 0) {
+      setError(`Could not delete image file(s): ${failedAttachments.join(', ')}.`);
     }
 
     try {
@@ -198,6 +217,99 @@ const App: React.FC = () => {
     workspace.setObjects((prev) => [...prev, imageObject]);
   };
 
+  // Image attachments share the overlay's validation and storage plumbing but
+  // a different lifecycle: they are one reference among several on a
+  // still-existing object, so persistence leads and storage cleanup follows.
+  const handleObjectImagesSelected = async (id: string, files: File[]) => {
+    setError(null);
+
+    if (!user) {
+      setError('Sign in to add images.');
+      return;
+    }
+
+    // Strict all-or-nothing gate: validate the whole batch before any upload,
+    // so a rejected batch leaves zero storage side effects to clean up.
+    const invalid = files
+      .map((file) => ({ file, error: validateImageFile(file) }))
+      .filter((entry): entry is { file: File; error: string } => entry.error !== null);
+    if (invalid.length > 0) {
+      const reasons = invalid
+        .map((entry) => `${entry.file.name} (${entry.error})`)
+        .join(', ');
+      setError(`Could not add images: ${reasons}`);
+      return;
+    }
+
+    // Generate the image id per file before upload so the storage path is
+    // stable even if the upload itself fails.
+    const uploads = files.map(async (file) => {
+      const imageId = crypto.randomUUID();
+      const storagePath = buildObjectImageStoragePath(user.uid, id, imageId, file.name);
+      const uploaded = await uploadMapImage(MAP_IMAGES_BUCKET, storagePath, file);
+      const image: MapObjectImage = {
+        id: imageId,
+        imageUrl: uploaded.imageUrl,
+        fileName: file.name,
+        storagePath: uploaded.storagePath,
+        storageOwnerId: user.uid,
+      };
+      return { file, image };
+    });
+    const results = await Promise.allSettled(uploads);
+
+    const uploadedImages: MapObjectImage[] = [];
+    const failedNames: string[] = [];
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      if (result.status === 'fulfilled') {
+        uploadedImages.push(result.value.image);
+      } else {
+        console.error('Image upload failed:', result.reason);
+        failedNames.push(files[i].name);
+      }
+    }
+
+    if (uploadedImages.length === 0) {
+      setError(`Could not upload: ${failedNames.join(', ')}.`);
+      return;
+    }
+    if (failedNames.length > 0) {
+      // Partial success: attach what uploaded and surface the failures so
+      // the user can retry those files by re-picking them.
+      setError(`Could not upload: ${failedNames.join(', ')}.`);
+    }
+
+    // One Firestore write for the whole batch. patchObject merges into the
+    // freshly stored object, so concurrent panel edits survive.
+    const target = workspace.objects.find((o) => o.id === id);
+    workspace.patchObject(id, {
+      images: [...(target?.images ?? []), ...uploadedImages],
+    });
+  };
+
+  const handleRemoveObjectImage = async (id: string, imageId: string) => {
+    const target = workspace.objects.find((o) => o.id === id);
+    const image = target?.images?.find((img) => img.id === imageId);
+    if (!image) return;
+
+    // Document first: the removal must stand even if storage cleanup fails.
+    workspace.patchObject(id, {
+      images: (target?.images ?? []).filter((img) => img.id !== imageId),
+    });
+
+    // Best-effort cleanup of the removed file, only when the current user
+    // owns it (imported attachments from another owner are never deleted).
+    if (user && image.storageOwnerId === user.uid && image.storagePath) {
+      try {
+        await deleteMapImage(MAP_IMAGES_BUCKET, image.storagePath);
+      } catch (err) {
+        console.error('Failed to delete attachment file:', err);
+        setError(`Could not delete image file: ${image.fileName}.`);
+      }
+    }
+  };
+
   return (
     <SidebarProvider className="relative h-screen overflow-hidden bg-background">
 
@@ -244,6 +356,9 @@ const App: React.FC = () => {
         onGeometryEditModeChange={session.setGeometryEditMode}
         onObjectUpdate={workspace.patchObject}
         onObjectDelete={handleObjectDelete}
+        canAddImages={!!user}
+        onAddImage={handleObjectImagesSelected}
+        onRemoveImage={handleRemoveObjectImage}
         onImportData={workspace.importData}
         onSaveProject={handleSaveProject}
         onLoadProject={handleLoadProject}

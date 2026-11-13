@@ -151,6 +151,7 @@ export {
   uploadMapImage,
   deleteMapImage,
   buildMapImageStoragePath,
+  buildObjectImageStoragePath,
 } from './supabase';
 export { MAP_IMAGES_BUCKET } from './supabase';
 

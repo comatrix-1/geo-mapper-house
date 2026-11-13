@@ -35,6 +35,21 @@ export const buildMapImageStoragePath = (
 ): string => `users/${uid}/mapImages/${objectId}/${fileName.replace(/[\\/]/g, '_')}`;
 
 /**
+ * Path shape for image attachments on any map object:
+ * users/<uid>/objectImages/<objectId>/<imageId>/<fileName>
+ * The `imageId` segment prevents collisions when one object holds multiple
+ * attachments with the same filename; the filename is sanitized the same way
+ * as overlay paths so a `/` in a filename cannot escape the ownership prefix.
+ */
+export const buildObjectImageStoragePath = (
+  uid: string,
+  objectId: string,
+  imageId: string,
+  fileName: string,
+): string =>
+  `users/${uid}/objectImages/${objectId}/${imageId}/${fileName.replace(/[\\/]/g, '_')}`;
+
+/**
  * Upload a map image to Supabase Storage. Returns the public download URL and
  * the storage path. Supabase receives the signed-in Firebase user's ID token.
  */
