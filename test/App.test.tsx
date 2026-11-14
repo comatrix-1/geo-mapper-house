@@ -91,6 +91,10 @@ const workspaceState = vi.hoisted(() => ({
   deleteObject: vi.fn(),
   persistObject: vi.fn(),
   patchObject: vi.fn(),
+  appendObjectImages: vi.fn(),
+  removeObjectImage: vi.fn(),
+  withObjectImageLock: vi.fn(),
+  removeObjectLocally: vi.fn(),
   replaceAll: vi.fn(),
   importData: vi.fn(),
   addLayer: vi.fn(),
@@ -102,6 +106,12 @@ const workspaceState = vi.hoisted(() => ({
   reorderObjectInLayerAt: vi.fn(),
   setActiveLayerId: vi.fn(),
 }));
+
+const cleanupQueue = vi.hoisted(() => ({
+  enqueueImageCleanup: vi.fn(),
+  retryImageCleanup: vi.fn().mockResolvedValue([]),
+}));
+vi.mock('../src/utils/image-cleanup-queue', () => cleanupQueue);
 
 vi.mock('../src/hooks/use-workspace', () => ({ useWorkspace: () => workspaceState }));
 
@@ -209,6 +219,15 @@ beforeEach(() => {
   mockImg.getImageDimensions.mockResolvedValue({ width: 800, height: 600 });
   mockImg.createImageBounds.mockReturnValue({ southWest: { lat: 1, lng: 1 }, northEast: { lat: 5, lng: 5 } });
   mockFb.uploadMapImage.mockResolvedValue(uploadedImage);
+  // The workspace ops that persist resolve as success by default; individual
+  // tests override this to exercise the failure / concurrent-delete paths.
+  workspaceState.removeObjectImage.mockResolvedValue(true);
+  workspaceState.appendObjectImages.mockResolvedValue({ status: 'attached' });
+  workspaceState.withObjectImageLock.mockImplementation(
+    (_id: string, operation: (target: Record<string, unknown> | undefined) => unknown) =>
+      Promise.resolve(operation(workspaceState.objects.find((obj) => obj.id === _id))),
+  );
+  cleanupQueue.retryImageCleanup.mockResolvedValue([]);
   // The workspace loads from Firestore on sign-in; mirror that by returning
   // whatever objects the test has pre-seeded into the shared state.
   mockFb.loadUserData.mockImplementation(() =>
@@ -388,7 +407,7 @@ describe('App object image attachments', () => {
 
     expect(mockFb.uploadMapImage).not.toHaveBeenCalled();
     expect(mockFb.saveObject).not.toHaveBeenCalled();
-    expect(workspaceState.patchObject).not.toHaveBeenCalled();
+    expect(workspaceState.appendObjectImages).not.toHaveBeenCalled();
     expect(screen.getByRole('alert')).toHaveTextContent('bad.txt');
   });
 
@@ -414,14 +433,16 @@ describe('App object image attachments', () => {
     expect(mockFb.uploadMapImage.mock.calls[0][1]).toMatch(
       /^users\/u1\/objectImages\/point-1\//,
     );
-    // One Firestore write for the whole batch, existing attachments kept.
-    expect(workspaceState.patchObject).toHaveBeenCalledTimes(1);
-    const update = workspaceState.patchObject.mock.calls[0][1];
-    expect(update.images).toHaveLength(4);
-    expect(update.images.slice(2)).toEqual([
-      expect.objectContaining({ fileName: 'a.png', storageOwnerId: 'u1' }),
-      expect.objectContaining({ fileName: 'b.png', storageOwnerId: 'u1' }),
-    ]);
+    // One workspace operation for the whole batch; the workspace merges into
+    // the object's current attachment list, existing attachments kept.
+    expect(workspaceState.appendObjectImages).toHaveBeenCalledTimes(1);
+    expect(workspaceState.appendObjectImages).toHaveBeenCalledWith(
+      'point-1',
+      [
+        expect.objectContaining({ fileName: 'a.png', storageOwnerId: 'u1' }),
+        expect.objectContaining({ fileName: 'b.png', storageOwnerId: 'u1' }),
+      ],
+    );
   });
 
   it('attaches the successful uploads and toasts when some uploads fail', async () => {
@@ -444,12 +465,66 @@ describe('App object image attachments', () => {
     const failFile = new File(['f'], 'fail.png', { type: 'image/png' });
     await attachFiles(user, [failFile, okFile]);
 
-    // Successful attachments still land in one update; the failure toasts.
-    expect(workspaceState.patchObject).toHaveBeenCalledTimes(1);
-    const update = workspaceState.patchObject.mock.calls[0][1];
-    expect(update.images).toHaveLength(3);
-    expect(update.images[2]).toMatchObject({ fileName: 'ok.png' });
+    // Successful attachments still land in one operation; the failure toasts.
+    expect(workspaceState.appendObjectImages).toHaveBeenCalledTimes(1);
+    expect(workspaceState.appendObjectImages.mock.calls[0][1]).toEqual([
+      expect.objectContaining({ fileName: 'ok.png' }),
+    ]);
     expect(screen.getByRole('alert')).toHaveTextContent('fail.png');
+  });
+
+  it('cleans up the uploaded files when the object was deleted while uploads were in flight', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    // The stored object is gone by the time the batch finishes uploading.
+    workspaceState.appendObjectImages.mockResolvedValue({ status: 'missing' });
+
+    const file = new File(['a'], 'a.png', { type: 'image/png' });
+    await attachFiles(user, [file]);
+
+    // The merge never lands, so the freshly uploaded file is removed
+    // instead of being left as an orphan in Storage.
+    expect(mockFb.deleteMapImage).toHaveBeenCalledWith('map-images', uploadedImage.storagePath);
+  });
+
+  it('cleans unreferenced uploads and reports a persistence failure', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    workspaceState.appendObjectImages.mockResolvedValue({
+      status: 'failed',
+      error: new Error('Firestore unavailable'),
+      confirmedImages: [],
+    });
+
+    await attachFiles(user, [new File(['a'], 'a.png', { type: 'image/png' })]);
+
+    expect(mockFb.deleteMapImage).toHaveBeenCalledWith('map-images', uploadedImage.storagePath);
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not save image attachments.');
+  });
+
+  it('durably queues an uploaded file when orphan cleanup fails', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    workspaceState.appendObjectImages.mockResolvedValue({ status: 'missing' });
+    mockFb.deleteMapImage.mockRejectedValueOnce(new Error('Storage unavailable'));
+
+    await attachFiles(user, [new File(['a'], 'a.png', { type: 'image/png' })]);
+
+    expect(cleanupQueue.enqueueImageCleanup).toHaveBeenCalledWith([
+      {
+        uid: 'u1',
+        bucket: 'map-images',
+        storagePath: uploadedImage.storagePath,
+        fileName: 'a.png',
+      },
+    ]);
+    expect(screen.getByRole('alert')).toHaveTextContent('Cleanup will retry.');
   });
 
   it('removes an attachment even when its storage delete rejects', async () => {
@@ -463,14 +538,22 @@ describe('App object image attachments', () => {
     await user.click(screen.getByRole('button', { name: 'Remove image a1.png' }));
 
     // The removal stands; the failed cleanup of the owned file is surfaced.
-    expect(workspaceState.patchObject).toHaveBeenCalledWith('point-1', {
-      images: [attachment2],
-    });
+    expect(workspaceState.removeObjectImage).toHaveBeenCalledWith('point-1', 'att-1');
     expect(mockFb.deleteMapImage).toHaveBeenCalledWith(
       'map-images',
       attachment1.storagePath,
     );
-    expect(screen.getByRole('alert')).toHaveTextContent('Could not delete image file');
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not delete image file: a1.png. Cleanup will retry.',
+    );
+    expect(cleanupQueue.enqueueImageCleanup).toHaveBeenCalledWith([
+      {
+        uid: 'u1',
+        bucket: 'map-images',
+        storagePath: attachment1.storagePath,
+        fileName: 'a1.png',
+      },
+    ]);
   });
 
   it('never deletes another owner\u2019s attachment file when removing it', async () => {
@@ -486,9 +569,7 @@ describe('App object image attachments', () => {
     expect(mockFb.deleteMapImage).not.toHaveBeenCalled();
     // The workspace mock keeps the seeded objects, so the filter is computed
     // against them: only att-2 (the removed one) is dropped.
-    expect(workspaceState.patchObject).toHaveBeenCalledWith('point-1', {
-      images: [attachment1],
-    });
+    expect(workspaceState.removeObjectImage).toHaveBeenCalledWith('point-1', 'att-2');
   });
 
   it('deletes owned attachment files, then the object', async () => {
@@ -510,7 +591,7 @@ describe('App object image attachments', () => {
       attachment2.storagePath,
     );
     expect(mockFb.deleteObject).toHaveBeenCalledWith('u1', 'point-1');
-    expect(workspaceState.deleteObject).toHaveBeenCalledWith('point-1');
+    expect(workspaceState.removeObjectLocally).toHaveBeenCalledWith('point-1');
   });
 
   it('still deletes the object when attachment cleanup fails, surfacing the failure', async () => {
@@ -524,9 +605,31 @@ describe('App object image attachments', () => {
     await user.click(screen.getByRole('button', { name: 'Delete Object' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent(
-      'Could not delete image file(s): a1.png'
+      'Could not delete image file(s): a1.png. Cleanup will retry.'
     );
     expect(mockFb.deleteObject).toHaveBeenCalledWith('u1', 'point-1');
-    expect(workspaceState.deleteObject).toHaveBeenCalledWith('point-1');
+    expect(workspaceState.removeObjectLocally).toHaveBeenCalledWith('point-1');
+    expect(cleanupQueue.enqueueImageCleanup).toHaveBeenCalledWith([
+      {
+        uid: 'u1',
+        bucket: 'map-images',
+        storagePath: attachment1.storagePath,
+        fileName: 'a1.png',
+      },
+    ]);
+  });
+
+  it('does not delete an attachment file when its document removal fails', async () => {
+    const user = userEvent.setup();
+    workspaceState.objects = [pointWithAttachments];
+    render(<App />);
+    authState.setUser('u1');
+    workspaceState.removeObjectImage.mockRejectedValue(new Error('Firestore unavailable'));
+
+    await user.click(screen.getByText('Photo point'));
+    await user.click(screen.getByRole('button', { name: 'Remove image a1.png' }));
+
+    expect(mockFb.deleteMapImage).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent('Could not remove image: a1.png.');
   });
 });

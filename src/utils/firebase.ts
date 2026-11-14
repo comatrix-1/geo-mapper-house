@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { collection, deleteDoc, deleteField, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
-import type { Layer, MapObject } from '../types';
+import { arrayUnion, collection, deleteDoc, deleteField, doc, getDoc, getDocs, getFirestore, runTransaction, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
+import type { Layer, MapObject, MapObjectImage } from '../types';
 import { setFirebaseAccessTokenProvider } from './supabase';
 
 // ------------------------------------------------------------------
@@ -133,7 +133,19 @@ export const saveLayers = async (uid: string, layers: Layer[]) => {
  */
 export const saveObject = async (uid: string, obj: MapObject) => {
     const objRef = doc(db, 'users', uid, 'mapObjects', obj.id);
-    await setDoc(objRef, obj);
+    await runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(objRef);
+        const objectToSave = { ...obj };
+        if (snapshot.exists()) {
+            const storedImages = snapshot.data().images;
+            if (Array.isArray(storedImages)) {
+                objectToSave.images = storedImages;
+            } else {
+                delete objectToSave.images;
+            }
+        }
+        transaction.set(objRef, objectToSave);
+    });
 };
 
 /**
@@ -142,6 +154,45 @@ export const saveObject = async (uid: string, obj: MapObject) => {
 export const deleteObject = async (uid: string, objId: string) => {
     const objRef = doc(db, 'users', uid, 'mapObjects', objId);
     await deleteDoc(objRef);
+};
+
+/**
+ * Append image attachments to a stored map object. The arrayUnion makes
+ * Firestore read the document's current images list and persist the merged
+ * result in this single operation, so a concurrent removal or an earlier
+ * batch's append is neither resurrected nor overwritten by this write.
+ */
+export const appendObjectImages = async (uid: string, objId: string, images: MapObjectImage[]) => {
+    const objRef = doc(db, 'users', uid, 'mapObjects', objId);
+    await updateDoc(objRef, { images: arrayUnion(...images) });
+};
+
+/**
+ * Remove an attachment from the current stored object. The transaction keeps
+ * concurrent appends and other image edits, and does not recreate a deleted
+ * object.
+ */
+export const removeObjectImage = async (uid: string, objId: string, imageId: string) => {
+    const objRef = doc(db, 'users', uid, 'mapObjects', objId);
+    return runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(objRef);
+        if (!snapshot.exists()) return false;
+
+        const images = snapshot.data().images;
+        if (!Array.isArray(images)) return true;
+        const nextImages = images.filter((image: MapObjectImage) => image.id !== imageId);
+        if (nextImages.length === images.length) return true;
+
+        transaction.update(objRef, { images: nextImages });
+        return true;
+    });
+};
+
+/** Read the latest stored map object, or null when it no longer exists. */
+export const getObject = async (uid: string, objId: string): Promise<MapObject | null> => {
+    const objRef = doc(db, 'users', uid, 'mapObjects', objId);
+    const snapshot = await getDoc(objRef);
+    return snapshot.exists() ? (snapshot.data() as MapObject) : null;
 };
 
 // Image storage moved to Supabase (see ./supabase.ts). These re-exports keep
